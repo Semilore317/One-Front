@@ -1,0 +1,11 @@
+#pragma once
+
+struct Controls{
+    int left;
+    int right;
+    int jump;
+
+    int attack1;
+    int attack2;
+    int attack3;
+};

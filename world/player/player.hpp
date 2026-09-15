@@ -1,11 +1,16 @@
+#pragma once
+
 #include "raylib.h"
+#include "./../../game/controls.hpp"
 
 struct Player{
+    Player();
+    Player(Vector2 position, Vector2 size);
+
     Vector2 position;
     Vector2 velocity;
     Vector2 size;
-};
 
-Player create_player(Vector2 position, Vector2 size);
-void update_player(Player& player, float deltaTime);
-void draw_pixel(const Player& player);
+    void update(float deltaTime, const Controls& controls);
+    void draw() const;
+};

@@ -16,7 +16,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 
 add_executable(OneFront main.cpp)
+add_library(OneFrontCore game.cpp player.cpp world.cpp)
 target_compile_features(OneFront PRIVATE cxx_std_20)
-target_link_libraries(OneFront PRIVATE raylib)
+target_link_libraries(OneFront PRIVATE raylib OneFrontCore)
 
 set(CMAKE_CXX_STANDARD 20)

@@ -1,4 +1,5 @@
 .idea/
+.zed/
 cmake-build-*/
 build/
 out/

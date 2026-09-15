@@ -1,21 +1,18 @@
 #include <raylib.h>
+#include "game/game.hpp"
 
 int main() {
-    InitWindow(1336, 768, "One Front");
-    SetTargetFPS(60);
+   Game game = create_game();
 
-    while (!WindowShouldClose()) {
-        BeginDrawing();
+   while(!WindowShouldClose()){
+       const float deltaTime = GetFrameTime();
 
-        ClearBackground(Color(22, 31, 40, 255));
-        DrawText("One Front", 30, 30, 32, RAYWHITE);
+       update_game(game, deltaTime);
+        
+       BeginDrawing();
+       ClearBackground(Color(0, 0, 0, 255));
 
-        // temporary ground
-        DrawRectangle(0, 520, 1100, 100, DARKGRAY);
-
-        EndDrawing();
-    }
-
-    CloseWindow();
-    return 0;
+       draw_game(game);
+       EndDrawing();
+   }
 }

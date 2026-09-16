@@ -9,7 +9,7 @@ Game::Game():
 
 void Game::update(float deltaTime) {
     // update things belonging to the game
-    player.update(deltaTime, controls);
+    player.update(deltaTime, controls, WINDOW_HEIGHT - 100);
 }
 
 void Game::draw() {

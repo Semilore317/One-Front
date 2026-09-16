@@ -1,9 +1,14 @@
 #include "./../world/player/player.hpp"
 
-struct Game{
-    Player player;
-};
+constexpr int WINDOW_WIDTH = 1280;
+constexpr int WINDOW_HEIGHT = 720;
 
-Game create_game();
-Game update_game(Game& game, float deltaTime);
-Game draw_game(const Game& game);
+struct Game{
+    Game();
+
+    Player player;
+    Controls controls;
+    
+    void update(float deltaTime);
+    void draw();
+};

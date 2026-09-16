@@ -1,6 +1,4 @@
-#include "raylib.h"
 #include "player.hpp"
-
 
 constexpr float DEFAULT_MOVE_SPEED = 200.0f; // 200px per second
 
@@ -32,7 +30,7 @@ void Player::update(float deltaTime, const Controls& controls) {
   position.x += velocity.x * deltaTime;
 }
 
-void Player::draw(const Player &player) {
+void Player::draw() const{
   // drawing goes here
-  // 
+  DrawRectangleV(position, size, RED);
 }

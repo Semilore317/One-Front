@@ -9,3 +9,6 @@ struct Controls{
     int attack2;
     int attack3;
 };
+
+extern const Controls WASD_Controls;
+extern const Controls Arrow_Controls;

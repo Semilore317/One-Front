@@ -13,7 +13,13 @@ struct Player {
   Vector2 velocity;
   Vector2 size;
 
-  void update(float deltaTime, const Controls &controls, float groundY);
+  void update(
+      float deltaTime, 
+      const Controls &controls, 
+      float groundY,
+      float leftBound,
+      float rightBound
+  );
 
 private:
   void apply_gravity(float deltaTime);

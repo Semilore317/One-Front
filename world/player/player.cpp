@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include "raylib.h"
+#include <algorithm>
 
 constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 400px per second
 constexpr float GRAVITY = 600.0f;
@@ -17,7 +18,13 @@ Player::Player(Vector2 position, Vector2 size):
     velocity{0, 0},
     size{size} {}
 
-void Player::update(float deltaTime, const Controls& controls, float groundY) {
+void Player::update(
+    float deltaTime, 
+    const Controls& controls, 
+    float groundY, 
+    float leftBound, 
+    float rightBound) {
+        
   // horizontal movement
   if(IsKeyDown(controls.left))
       velocity.x = -DEFAULT_MOVE_SPEED;
@@ -37,6 +44,10 @@ void Player::update(float deltaTime, const Controls& controls, float groundY) {
       apply_gravity(deltaTime);
 
   position.x += velocity.x * deltaTime;
+  // the valid range for x is:
+  // leftBound <= position.x <= rightBound - avatar width
+  position.x = std::clamp(position.x, leftBound, rightBound - size.x);
+  
   position.y += velocity.y * deltaTime;
 
   // check whether the bottom of the avatar has hit the ground

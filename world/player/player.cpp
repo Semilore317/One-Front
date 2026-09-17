@@ -1,7 +1,7 @@
 #include "player.hpp"
 #include "raylib.h"
 
-constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 200px per second
+constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 400px per second
 constexpr float GRAVITY = 600.0f;
 constexpr float JUMP_SPEED = 250.0f;
 
@@ -17,10 +17,6 @@ Player::Player(Vector2 position, Vector2 size):
     velocity{0, 0},
     size{size} {}
 
-void Player::apply_gravity(float deltaTime) {
-    velocity.y += GRAVITY * deltaTime;
-}
-
 void Player::update(float deltaTime, const Controls& controls, float groundY) {
   // horizontal movement
   if(IsKeyDown(controls.left))
@@ -29,10 +25,6 @@ void Player::update(float deltaTime, const Controls& controls, float groundY) {
       velocity.x = DEFAULT_MOVE_SPEED;
   else
       velocity.x = 0;
-
-  // if jump was pressed AND is grounded
-  // velocity.y = -GRAVITY * deltaTime;
-  // isGrounded = false;
 
   if(IsKeyPressed(controls.jump) && isGrounded){
       velocity.y = -JUMP_SPEED;
@@ -55,7 +47,6 @@ void Player::update(float deltaTime, const Controls& controls, float groundY) {
   }
 }
 
-void Player::draw() const{
-  // drawing goes here
-  DrawRectangleV(position, size, RED);
+void Player::apply_gravity(float deltaTime) {
+    velocity.y += GRAVITY * deltaTime;
 }

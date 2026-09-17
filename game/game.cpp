@@ -12,7 +12,8 @@ void Game::update(float deltaTime) {
     player.update(deltaTime, controls, WINDOW_HEIGHT - 100);
 }
 
-void Game::draw() {
+void Game::draw() const{
     // draw things belonging to the game
-    player.draw();
+    // TEMP: basic visualization until player renderer is merged
+    DrawRectangleV(player.position, player.size, RED);
 }

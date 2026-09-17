@@ -10,5 +10,5 @@ struct Game{
     Controls controls;
     
     void update(float deltaTime);
-    void draw();
+    void draw() const;
 };

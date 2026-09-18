@@ -10,9 +10,10 @@ Game::Game() : world{
                    WINDOW_WIDTH,
                    WINDOW_HEIGHT - 100,
                    std::vector<Platform>{
-                       Platform{{100, 600}, {200, 15}},
-                       Platform{{400, 500}, {200, 15}},
-                       Platform{{800, 500}, {200, 15}}
+                       {{120, 580}, {180, 15}},
+                       {{360, 550}, {180, 15}},
+                       {{650, 500}, {180, 15}},
+                       {{920, 500}, {160, 15}},
                    }
                },
                player{
@@ -29,7 +30,8 @@ void Game::update(float deltaTime) {
         controls,
         world.groundY,
         world.leftBound,
-        world.rightBound
+        world.rightBound,
+        world.platforms
     );
 }
 

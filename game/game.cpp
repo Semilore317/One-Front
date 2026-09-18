@@ -1,20 +1,14 @@
 #include "./game.hpp"
 #include "raylib.h"
 
-constexpr float PLAYER_HEIGHT = 50;
-constexpr float PLAYER_WIDTH = 30;
-constexpr float PLAYER_SPAWN_X = 50;
+constexpr float PLAYER_HEIGHT = 50.0f;
+constexpr float PLAYER_WIDTH = 30.0f;
+constexpr float PLAYER_SPAWN_X = 50.0f;
+constexpr float GROUND_OFFSET = 100.0f;
 
 Game::Game() : world{
-                   0,
                    WINDOW_WIDTH,
-                   WINDOW_HEIGHT - 100,
-                   std::vector<Platform>{
-                       {{120, 580}, {180, 15}},
-                       {{360, 550}, {180, 15}},
-                       {{650, 500}, {180, 15}},
-                       {{920, 500}, {160, 15}},
-                   }
+                   WINDOW_HEIGHT - GROUND_OFFSET,
                },
                player{
                    {PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},

@@ -8,7 +8,13 @@ constexpr float PLAYER_SPAWN_X = 50;
 Game::Game() : world{
                    0,
                    WINDOW_WIDTH,
-                   WINDOW_HEIGHT - 100
+                   WINDOW_HEIGHT - 100,
+                   std::vector<Platform>{
+                       {{120, 580}, {180, 15}},
+                       {{360, 550}, {180, 15}},
+                       {{650, 500}, {180, 15}},
+                       {{920, 500}, {160, 15}},
+                   }
                },
                player{
                    {PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},
@@ -24,7 +30,8 @@ void Game::update(float deltaTime) {
         controls,
         world.groundY,
         world.leftBound,
-        world.rightBound
+        world.rightBound,
+        world.platforms
     );
 }
 
@@ -38,7 +45,11 @@ void Game::draw() const {
         world.rightBound, 
         world.groundY, 
         BROWN);
-    
+
+     // draw the platforms
+     for(const Platform& platform: world.platforms)
+        DrawRectangleV(platform.position, platform.size, BROWN);
+     
     // TEMP: basic visualization until player renderer is merged
     DrawRectangleV(player.position, player.size, RED);
 }

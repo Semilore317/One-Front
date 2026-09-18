@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 4.2)
 
 project(OneFront LANGUAGES C CXX)
+
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
@@ -15,8 +21,8 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-add_executable(OneFront main.cpp)
-target_compile_features(OneFront PRIVATE cxx_std_20)
+add_executable(OneFront main.cpp rendering/draw_player.cpp game/game.cpp world/player/player.cpp)
+target_compile_features(OneFront PRIVATE cxx_std_23)
 target_link_libraries(OneFront PRIVATE raylib)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)

@@ -9,12 +9,6 @@ Game::Game() : world{
                    0,
                    WINDOW_WIDTH,
                    WINDOW_HEIGHT - 100,
-                   std::vector<Platform>{
-                       {{120, 580}, {180, 15}},
-                       {{360, 550}, {180, 15}},
-                       {{650, 500}, {180, 15}},
-                       {{920, 500}, {160, 15}},
-                   }
                },
                player{
                    {PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},

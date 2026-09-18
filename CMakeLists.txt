@@ -24,6 +24,7 @@ add_library(
     OneFrontCore
     game/game.cpp
     game/controls.cpp
+    world/world.cpp
     world/player/player.cpp
 )
 

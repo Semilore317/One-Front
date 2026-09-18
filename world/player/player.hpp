@@ -5,10 +5,16 @@
 #include "raylib.h"
 #include <vector>
 
+enum class Facing{
+    Left,
+    Right
+};
+
 struct Player {
   Player();
   Player(Vector2 position, Vector2 size);
 
+  Facing facing;
   bool isGrounded;
   Vector2 position;
   Vector2 velocity;

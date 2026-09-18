@@ -46,4 +46,10 @@ void Game::draw() const {
      
     // TEMP: basic visualization until player renderer is merged
     DrawRectangleV(player.position, player.size, RED);
+
+    float markerX = player.facing == Facing::Right
+        ? player.position.x + player.size.x - 5
+        : player.position.x;
+
+    DrawRectangle(markerX, player.position.y + 10, 5, 10, WHITE);
 }

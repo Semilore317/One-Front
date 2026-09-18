@@ -1,18 +1,24 @@
 #include "game/game.hpp"
-#include <raylib.h>
+#include "raylib.h"
+
 
 int main() {
-  Game game = create_game();
+  InitWindow(1280, 720, "One Front");
+  
+  Game game;
 
   while (!WindowShouldClose()) {
     const float deltaTime = GetFrameTime();
 
-    update_game(game, deltaTime);
+    game.update(deltaTime);
 
     BeginDrawing();
     ClearBackground(Color(0, 0, 0, 255));
 
-    draw_game(game);
+    game.draw();
     EndDrawing();
   }
+
+  CloseWindow();
+  return 0;
 }

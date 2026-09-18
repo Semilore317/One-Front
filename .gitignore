@@ -8,3 +8,4 @@ out/
 *.o
 *.pdb
 *.ilk
+.cache/neocmakelsp/

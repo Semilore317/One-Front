@@ -25,8 +25,11 @@ void Player::update(float deltaTime, const Controls &controls, float groundY,
   else
     velocity.x = 0;
 
+  float previousX = position.x;
+
   position.x += velocity.x * deltaTime;
   position.x = std::clamp(position.x, leftBound, rightBound - size.x);
+  handle_platform_horizontal_collision(previousX, platforms);
 
   // is the avatar standing on something?
   isGrounded = is_on_surface(groundY, platforms);
@@ -41,13 +44,16 @@ void Player::update(float deltaTime, const Controls &controls, float groundY,
   if (!isGrounded)
     apply_gravity(deltaTime);
 
+  float previousTop = position.y;
   float previousBottom = position.y + size.y;
 
   position.y += velocity.y * deltaTime;
 
+  float currentTop = position.y;
   float currentBottom = position.y + size.y;
 
-  // platform landing
+  // platform logic
+  handle_platform_underside_collision(previousTop, currentTop, platforms);
   handle_platform_landing(previousBottom, currentBottom, platforms);
 
   // ground landing
@@ -65,42 +71,88 @@ void Player::apply_gravity(float deltaTime) {
 }
 
 bool Player::is_on_surface(float groundY,
-                          const std::vector<Platform> &platforms) const {
+                           const std::vector<Platform> &platforms) const {
   // check whether we're still standing on a surface
   bool supported = position.y + size.y >= groundY;
+
   for (const Platform &platform : platforms) {
-    bool onPlatformTop = position.y + size.y == platform.position.y;
+    bool onPlatformTop = position.y + size.y == platform.top();
 
-    bool overlapsHorizontally =
-        position.x + size.x > platform.position.x &&
-        position.x < platform.position.x + platform.size.x;
-
-    if (onPlatformTop && overlapsHorizontally) {
+    if (onPlatformTop && overlaps_horizontally(platform)) {
       supported = true;
       break;
     }
   }
-
   return supported;
 }
 
 void Player::handle_platform_landing(float previousBottom, float currentBottom,
                                      const std::vector<Platform> &platforms) {
   for (const Platform &platform : platforms) {
-    float platformTop = platform.position.y;
-
     bool isFalling = velocity.y > 0;
     bool crossedPlatformTop =
-        previousBottom <= platformTop && currentBottom >= platformTop;
-    bool overlapsHorizontally =
-        position.x + size.x > platform.position.x &&
-        position.x < platform.position.x + platform.size.x;
+        previousBottom <= platform.top() && currentBottom >= platform.top();
 
-    if (isFalling && crossedPlatformTop && overlapsHorizontally) {
-      position.y = platform.position.y - size.y;
+    if (isFalling && crossedPlatformTop && overlaps_horizontally(platform)) {
+      position.y = platform.top() - size.y;
       velocity.y = 0;
       isGrounded = true;
       break;
     }
   }
+}
+
+void Player::handle_platform_horizontal_collision(
+    float previousX, const std::vector<Platform> &platforms) {
+  for (const Platform &platform : platforms) {
+    float previousLeft = previousX;
+    float previousRight = previousLeft + size.x;
+
+    float currentRight = position.x + size.x;
+    float currentLeft = position.x;
+
+    if (!overlaps_vertically(platform))
+      continue;
+
+    // moving right into platform's left side
+    if (velocity.x > 0 && previousRight <= platform.left() &&
+        currentRight >= platform.left()) {
+      position.x = platform.left() - size.x;
+      velocity.x = 0;
+      break;
+    }
+
+    // moving left into platform's right side
+    if (velocity.x < 0 && previousLeft >= platform.right() &&
+        currentLeft <= platform.right()) {
+      position.x = platform.right();
+      velocity.x = 0;
+      break;
+    }
+  }
+}
+
+void Player::handle_platform_underside_collision(
+    float previousTop, float currentTop,
+    const std::vector<Platform> &platforms) {
+  for (const Platform &platform : platforms) {
+    bool isRising = velocity.y < 0;
+
+    bool crossedPlatformBottom =
+        previousTop >= platform.bottom() && currentTop <= platform.bottom();
+
+    if (isRising && crossedPlatformBottom && overlaps_horizontally(platform)) {
+      position.y = platform.bottom();
+      velocity.y = 0;
+      break;
+    }
+  }
+}
+
+bool Player::overlaps_horizontally(const Platform &platform) const {
+  return position.x + size.x > platform.left() && position.x < platform.right();
+}
+
+bool Player::overlaps_vertically(const Platform &platform) const {
+  return position.y + size.y > platform.top() && position.y < platform.bottom();
 }

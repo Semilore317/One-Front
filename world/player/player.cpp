@@ -20,15 +20,13 @@ void Player::update(float deltaTime, const Controls &controls, float groundY,
                     const std::vector<Platform> &platforms) {
 
   // horizontal movement
-  if (IsKeyDown(controls.left)){
+  if (IsKeyDown(controls.left)) {
     velocity.x = -DEFAULT_MOVE_SPEED;
     facing = Facing::Left;
-  }
-  else if (IsKeyDown(controls.right)){
+  } else if (IsKeyDown(controls.right)) {
     velocity.x = DEFAULT_MOVE_SPEED;
     facing = Facing::Right;
-  }
-  else
+  } else
     velocity.x = 0;
 
   float previousX = position.x;

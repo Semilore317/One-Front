@@ -2,7 +2,6 @@
 #include "../rendering/draw_player.hpp"
 #include "raylib.h"
 
-
 constexpr float PLAYER_HEIGHT = 50.0f;
 constexpr float PLAYER_WIDTH = 30.0f;
 constexpr float PLAYER_SPAWN_X = 50.0f;
@@ -33,17 +32,6 @@ void Game::draw() const {
   // draw the platforms
   for (const Platform &platform : world.platforms)
     DrawRectangleV(platform.position, platform.size, BROWN);
-
-  /*
-  // TEMP: basic visualization until player renderer is merged
-  DrawRectangleV(player.position, player.size, RED);
-
-  float markerX = player.facing == Facing::Right
-      ? player.position.x + player.size.x - 5
-      : player.position.x;
-
-  DrawRectangle(markerX, player.position.y + 10, 5, 10, WHITE);
-  */
 
   draw_player(player);
 }

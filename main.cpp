@@ -1,10 +1,9 @@
 #include "game/game.hpp"
 #include "raylib.h"
 
-
 int main() {
   InitWindow(1280, 720, "One Front");
-  
+
   Game game;
 
   while (!WindowShouldClose()) {
@@ -18,7 +17,6 @@ int main() {
     game.draw();
     EndDrawing();
   }
-
   CloseWindow();
   return 0;
 }

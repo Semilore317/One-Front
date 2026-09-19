@@ -2,7 +2,6 @@
 #include "../rendering/draw_player.hpp"
 #include "raylib.h"
 
-
 constexpr float PLAYER_HEIGHT = 50.0f;
 constexpr float PLAYER_WIDTH = 30.0f;
 constexpr float PLAYER_SPAWN_X = 50.0f;
@@ -44,6 +43,20 @@ void Game::draw() const {
 
   DrawRectangle(markerX, player.position.y + 10, 5, 10, WHITE);
   */
+  // 1. define health bar dimensions and screen positions within game
+  float barX = 20.0f;
+  float barY = 20.0f;
+  float maxBarWidth = 200.0f;
+  float barHeight = 20.0f;
+
+  // 2.calculate the health ratio between (o.o and 1.0).
+  float healthRatio = player.current_health / player.max_health;
+
+  // 3. draw the background (Empty/missing health)
+  DrawRectangle(barX, barY, maxBarWidth, barHeight, DARKGRAY);
+
+  // 4.draw the foreround (currenthealth) scaled by the ratio.
+  DrawRectangle(barX, barY, maxBarWidth * healthRatio, barHeight, GREEN);
 
   draw_player(player);
 }

@@ -5,10 +5,16 @@
 #include "raylib.h"
 #include <vector>
 
+enum class Facing{
+    Left,
+    Right
+};
+
 struct Player {
   Player();
   Player(Vector2 position, Vector2 size);
 
+  Facing facing;
   bool isGrounded;
   Vector2 position;
   Vector2 velocity;
@@ -17,7 +23,8 @@ struct Player {
   void update(float deltaTime, const Controls &controls, float groundY,
               float leftBound, float rightBound,
               const std::vector<Platform> &platforms);
-
+  void draw_player(const Player& player);
+  
 private:
   void apply_gravity(float deltaTime);
   bool is_on_surface(float groundY,

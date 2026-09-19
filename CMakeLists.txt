@@ -26,6 +26,7 @@ add_library(
     game/controls.cpp
     world/world.cpp
     world/player/player.cpp
+    rendering/draw_player.cpp
 )
 
 add_executable(

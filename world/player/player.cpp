@@ -8,20 +8,26 @@ constexpr float GRAVITY = 600.0f;
 constexpr float JUMP_SPEED = 300.0f;
 
 Player::Player()
-    : isGrounded{true}, position{0, 0}, velocity{0, 0}, size{1, 1} {}
+    : facing{Facing::Right}, isGrounded{true}, position{0, 0}, velocity{0, 0},
+      size{1, 1} {}
 
 Player::Player(Vector2 position, Vector2 size)
-    : isGrounded{true}, position{position}, velocity{0, 0}, size{size} {}
+    : facing{Facing::Right}, isGrounded{true}, position{position},
+      velocity{0, 0}, size{size} {}
 
 void Player::update(float deltaTime, const Controls &controls, float groundY,
                     float leftBound, float rightBound,
                     const std::vector<Platform> &platforms) {
 
   // horizontal movement
-  if (IsKeyDown(controls.left))
+  if (IsKeyDown(controls.left)){
     velocity.x = -DEFAULT_MOVE_SPEED;
-  else if (IsKeyDown(controls.right))
+    facing = Facing::Left;
+  }
+  else if (IsKeyDown(controls.right)){
     velocity.x = DEFAULT_MOVE_SPEED;
+    facing = Facing::Right;
+  }
   else
     velocity.x = 0;
 

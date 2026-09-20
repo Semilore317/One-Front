@@ -2,21 +2,21 @@
 #include "raylib.h"
 
 int main() {
-  InitWindow(1280, 720, "One Front");
+	InitWindow(1280, 720, "One Front");
 
-  Game game;
+	Game game;
 
-  while (!WindowShouldClose()) {
-    const float deltaTime = GetFrameTime();
+	while (!WindowShouldClose()) {
+		const float deltaTime = GetFrameTime();
 
-    game.update(deltaTime);
+		game.update(deltaTime);
 
-    BeginDrawing();
-    ClearBackground(Color(0, 0, 0, 255));
+		BeginDrawing();
+		ClearBackground(Color(0, 0, 0, 255));
 
-    game.draw();
-    EndDrawing();
-  }
-  CloseWindow();
-  return 0;
+		game.draw();
+		EndDrawing();
+	}
+	CloseWindow();
+	return 0;
 }

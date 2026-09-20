@@ -26,7 +26,7 @@ ReferenceAlignment: Right
 
 AllowShortIfStatementsOnASingleLine: Never 
 AllowShortLoopsOnASingleLine: false 
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Inline
 
 # keep argument/param wrapping variable
 BinPackArguments: false

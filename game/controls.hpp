@@ -1,13 +1,13 @@
 #pragma once
 
-struct Controls{
-    int left;
-    int right;
-    int jump;
+struct Controls {
+	int left;
+	int right;
+	int jump;
 
-    int attack1;
-    int attack2;
-    int attack3;
+	int attack1;
+	int attack2;
+	int attack3;
 };
 
 extern const Controls WASD_Controls;

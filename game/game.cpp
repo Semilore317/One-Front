@@ -27,8 +27,6 @@ void Game::update(float deltaTime) {
 }
 
 void Game::draw() const {
-	// draw things belonging to the game
-
 	// the ground
 	DrawLine(
 	    world.leftBound, world.groundY, world.rightBound, world.groundY, BROWN);
@@ -37,15 +35,16 @@ void Game::draw() const {
 	for (const Platform &platform : world.platforms)
 		DrawRectangleV(platform.position, platform.size, BROWN);
 
+	// health bar dimensions and size
 	float barX = 20.0f;
 	float barY = 20.0f;
 	float maxBarWidth = 200.0f;
 	float barHeight = 20.0f;
 
-	float healthRatio = player.current_health / player.max_health;
+	float healthRatio = player.currentHealth / player.maxHealth;
 
+	// background and foreground for healthbar
 	DrawRectangle(barX, barY, maxBarWidth, barHeight, DARKGRAY);
-
 	DrawRectangle(barX, barY, maxBarWidth * healthRatio, barHeight, GREEN);
 
 	draw_player(player);

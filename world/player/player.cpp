@@ -3,23 +3,42 @@
 #include <algorithm>
 #include <vector>
 
+// Player stats
+constexpr float DEFAULT_MAX_HEALTH = 100.0f;
+
+// Movement
 constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 400px per second
 constexpr float GRAVITY = 600.0f;
 constexpr float JUMP_SPEED = 300.0f;
 
+// Combat
+constexpr float ATTACK_DURATION = 0.2f;
+constexpr float ATTACK_COOLDOWN = 0.5f;
+constexpr float ATTACK_RANGE = 25.0f; 
+
 Player::Player():
+    position{0,0},
+    velocity{0,0},
+    size{1,1},
     facing{Facing::Right},
     isGrounded{true},
-    position{0, 0},
-    velocity{0, 0},
-    size{1, 1} {}
+    isAttacking{false},
+    attackTimeRemaining{0.0f},
+    attackCooldownRemaining{0.0f},
+    maxHealth{DEFAULT_MAX_HEALTH},
+    currentHealth{DEFAULT_MAX_HEALTH} {}
 
 Player::Player(Vector2 position, Vector2 size):
+    position{position},
+    velocity{0,0},
+    size{size},
     facing{Facing::Right},
     isGrounded{true},
-    position{position},
-    velocity{0, 0},
-    size{size} {}
+    isAttacking{false},
+    attackTimeRemaining{0.0f},
+    attackCooldownRemaining{0.0f},
+    maxHealth{DEFAULT_MAX_HEALTH},
+    currentHealth{DEFAULT_MAX_HEALTH} {}
 
 void Player::update(float deltaTime,
                     const Controls &controls,

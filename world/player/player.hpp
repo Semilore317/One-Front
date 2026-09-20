@@ -11,22 +11,24 @@ struct Player {
 	Player();
 	Player(Vector2 position, Vector2 size);
 
-	Facing facing;
-	bool isGrounded;
-	Vector2 position;
-	Vector2 velocity;
-	Vector2 size;
+  Vector2 position;
+  Vector2 velocity;
+  Vector2 size;
 
-	void update(float deltaTime,
-	            const Controls &controls,
-	            float groundY,
-	            float leftBound,
-	            float rightBound,
-	            const std::vector<Platform> &platforms);
-	void draw_player(const Player &player);
+  Facing facing;
+  bool isGrounded;
 
-	float max_health = 100.0f;
-	float current_health = 50.0f;
+  bool isAttacking;
+  float attackTimeRemaining;
+  float attackCooldownRemaining;
+
+  float maxHealth;
+  float currentHealth;
+
+  Rectangle attack_hitbox() const;
+  void update(float deltaTime, const Controls &controls, float groundY,
+              float leftBound, float rightBound,
+              const std::vector<Platform> &platforms);
 
   private:
 	void apply_gravity(float deltaTime);

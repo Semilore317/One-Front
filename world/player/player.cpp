@@ -3,23 +3,61 @@
 #include <algorithm>
 #include <vector>
 
+// Player stats
+constexpr float DEFAULT_MAX_HEALTH = 100.0f;
+
+// Movement
 constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 400px per second
 constexpr float GRAVITY = 600.0f;
 constexpr float JUMP_SPEED = 300.0f;
 
+// Combat
+constexpr float ATTACK_DURATION = 0.2f;
+constexpr float ATTACK_COOLDOWN = 0.5f;
+constexpr float ATTACK_REACH = 25.0f;
+constexpr float ATTACK_THICKNESS = 20.0f;
+
 Player::Player():
-    facing{Facing::Right},
-    isGrounded{true},
     position{0, 0},
     velocity{0, 0},
-    size{1, 1} {}
-
-Player::Player(Vector2 position, Vector2 size):
+    size{1, 1},
     facing{Facing::Right},
     isGrounded{true},
+    isAttacking{false},
+    attackTimeRemaining{0.0f},
+    attackCooldownRemaining{0.0f},
+    maxHealth{DEFAULT_MAX_HEALTH},
+    currentHealth{DEFAULT_MAX_HEALTH} {}
+
+Player::Player(Vector2 position, Vector2 size):
     position{position},
     velocity{0, 0},
-    size{size} {}
+    size{size},
+    facing{Facing::Right},
+    isGrounded{true},
+    isAttacking{false},
+    attackTimeRemaining{0.0f},
+    attackCooldownRemaining{0.0f},
+    maxHealth{DEFAULT_MAX_HEALTH},
+    currentHealth{DEFAULT_MAX_HEALTH} {}
+
+// clang-format off
+Rectangle Player::attack_hitbox() const {
+	const float hitBoxX =
+	    facing == Facing::Right
+					? position.x + size.x
+					: position.x - size.x;
+
+	const float hitBoxY = position.y + (size.y - ATTACK_THICKNESS) * 0.5f;
+
+	return {
+		hitBoxX,
+		hitBoxY,
+		ATTACK_THICKNESS,
+		size.y - ATTACK_THICKNESS
+	};
+}
+// clang-format on
 
 void Player::update(float deltaTime,
                     const Controls &controls,
@@ -27,6 +65,7 @@ void Player::update(float deltaTime,
                     float leftBound,
                     float rightBound,
                     const std::vector<Platform> &platforms) {
+	update_attack(deltaTime, controls);
 
 	// horizontal movement
 	if (IsKeyDown(controls.left)) {
@@ -77,8 +116,9 @@ void Player::update(float deltaTime,
 	}
 }
 
-/* Private Methods */
+/* Private Helpers*/
 
+/* Platforming Helpers */
 void Player::apply_gravity(float deltaTime) {
 	velocity.y += GRAVITY * deltaTime;
 }
@@ -174,4 +214,19 @@ bool Player::overlaps_horizontally(const Platform &platform) const {
 bool Player::overlaps_vertically(const Platform &platform) const {
 	return position.y + size.y > platform.top() &&
 	       position.y < platform.bottom();
+}
+
+/* Combat Helpers */
+void Player::update_attack(float deltaTime, const Controls &controls) {
+	attackTimeRemaining = std::max(0.0f, attackTimeRemaining - deltaTime);
+	attackCooldownRemaining =
+	    std::max(0.0f, attackCooldownRemaining - deltaTime);
+
+	isAttacking = attackTimeRemaining > 0;
+
+	if (IsKeyPressed(controls.attack1) && attackCooldownRemaining == 0.0f) {
+		attackTimeRemaining = ATTACK_DURATION;
+		attackCooldownRemaining = ATTACK_COOLDOWN;
+		isAttacking = true;
+	}
 }

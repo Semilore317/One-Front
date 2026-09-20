@@ -4,6 +4,7 @@ struct Controls {
 	int left;
 	int right;
 	int jump;
+	int down;
 
 	int attack1;
 	int attack2;

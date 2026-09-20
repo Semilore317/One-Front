@@ -11,24 +11,30 @@ struct Player {
 	Player();
 	Player(Vector2 position, Vector2 size);
 
-	Facing facing;
-	bool isGrounded;
 	Vector2 position;
 	Vector2 velocity;
 	Vector2 size;
 
+	Facing facing;
+	bool isGrounded;
+
+	bool isAttacking;
+	float attackTimeRemaining;
+	float attackCooldownRemaining;
+
+	float maxHealth;
+	float currentHealth;
+
+	Rectangle attack_hitbox() const;
 	void update(float deltaTime,
 	            const Controls &controls,
 	            float groundY,
 	            float leftBound,
 	            float rightBound,
 	            const std::vector<Platform> &platforms);
-	void draw_player(const Player &player);
-
-	float max_health = 100.0f;
-	float current_health = 50.0f;
 
   private:
+	// Platforming Helpers
 	void apply_gravity(float deltaTime);
 	bool is_on_surface(float groundY,
 	                   const std::vector<Platform> &platforms) const;
@@ -43,4 +49,7 @@ struct Player {
 	                                    const std::vector<Platform> &platforms);
 	bool overlaps_horizontally(const Platform &platform) const;
 	bool overlaps_vertically(const Platform &platform) const;
+
+	// Combat Helpers
+	void update_attack(float deltaTime, const Controls &controls);
 };

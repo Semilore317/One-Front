@@ -14,7 +14,8 @@ constexpr float JUMP_SPEED = 300.0f;
 // Combat
 constexpr float ATTACK_DURATION = 0.2f;
 constexpr float ATTACK_COOLDOWN = 0.5f;
-constexpr float ATTACK_RANGE = 25.0f; 
+constexpr float ATTACK_REACH = 25.0f; 
+constexpr float ATTACK_THICKNESS = 20.0f;
 
 Player::Player():
     position{0,0},
@@ -46,6 +47,7 @@ void Player::update(float deltaTime,
                     float leftBound,
                     float rightBound,
                     const std::vector<Platform> &platforms) {
+<<<<<<< HEAD
 
 	// horizontal movement
 	if (IsKeyDown(controls.left)) {
@@ -56,6 +58,18 @@ void Player::update(float deltaTime,
 		facing = Facing::Right;
 	} else
 		velocity.x = 0;
+=======
+    update_attack(deltaTime, controls);
+  // horizontal movement
+  if (IsKeyDown(controls.left)) {
+    velocity.x = -DEFAULT_MOVE_SPEED;
+    facing = Facing::Left;
+  } else if (IsKeyDown(controls.right)) {
+    velocity.x = DEFAULT_MOVE_SPEED;
+    facing = Facing::Right;
+  } else
+    velocity.x = 0;
+>>>>>>> 5f1125d (feat: added helper for updating attacks)
 
 	float previousX = position.x;
 
@@ -96,8 +110,9 @@ void Player::update(float deltaTime,
 	}
 }
 
-/* Private Methods */
+/* Private Helpers*/
 
+/* Platforming Helpers */
 void Player::apply_gravity(float deltaTime) {
 	velocity.y += GRAVITY * deltaTime;
 }
@@ -193,4 +208,18 @@ bool Player::overlaps_horizontally(const Platform &platform) const {
 bool Player::overlaps_vertically(const Platform &platform) const {
 	return position.y + size.y > platform.top() &&
 	       position.y < platform.bottom();
+}
+
+/* Combat Helpers */
+void Player::update_attack(float deltaTime, const Controls &controls){
+   attackTimeRemaining = std::max(0.0f, attackTimeRemaining - deltaTime);
+   attackCooldownRemaining = std::max(0.0f, attackCooldownRemaining - deltaTime);
+
+   isAttacking = attackTimeRemaining > 0;
+
+   if(IsKeyPressed(controls.attack1) && attackCooldownRemaining == 0.0f){
+       attackTimeRemaining = ATTACK_DURATION;
+       attackCooldownRemaining = ATTACK_COOLDOWN;
+       isAttacking = true;
+   }
 }

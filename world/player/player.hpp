@@ -30,6 +30,7 @@ struct Player {
               float leftBound, float rightBound,
               const std::vector<Platform> &platforms);
 
+<<<<<<< HEAD
   private:
 	void apply_gravity(float deltaTime);
 	bool is_on_surface(float groundY,
@@ -45,4 +46,24 @@ struct Player {
 	                                    const std::vector<Platform> &platforms);
 	bool overlaps_horizontally(const Platform &platform) const;
 	bool overlaps_vertically(const Platform &platform) const;
+=======
+private:
+  // Platforming Helpers
+  void apply_gravity(float deltaTime);
+  bool is_on_surface(float groundY,
+                     const std::vector<Platform> &platforms) const;
+  void handle_platform_landing(float previousBottom, float currentBottom,
+                               const std::vector<Platform> &platforms);
+  void
+  handle_platform_horizontal_collision(float previousX,
+                                       const std::vector<Platform> &platforms);
+  void
+  handle_platform_underside_collision(float previousTop, float currentTop,
+                                      const std::vector<Platform> &platforms);
+  bool overlaps_horizontally(const Platform &platform) const;
+  bool overlaps_vertically(const Platform &platform) const;
+
+  // Combat Helpers
+  void update_attack(float deltaTime, const Controls &controls);
+>>>>>>> 5f1125d (feat: added helper for updating attacks)
 };

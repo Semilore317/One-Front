@@ -29,6 +29,7 @@ add_library(
     world/player/player.cpp
     world/platform/platform.cpp
     rendering/draw_player.cpp
+    rendering/draw_training_dummy.cpp
 )
 
 add_executable(

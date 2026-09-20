@@ -19,6 +19,6 @@ struct Game {
 	void draw() const;
 
   private:
-	void draw_world() const;
+	void draw_world(float animationTime) const;
 	void draw_hud() const;
 };

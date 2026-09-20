@@ -1,5 +1,6 @@
 #include "./game.hpp"
 #include "../rendering/draw_player.hpp"
+#include "../rendering/draw_training_dummy.hpp"
 #include "raylib.h"
 #include <algorithm>
 
@@ -29,14 +30,16 @@ void Game::update(float deltaTime) {
 }
 
 void Game::draw() const {
+	const float animationTime = static_cast<float>(GetTime());
+
 	BeginMode2D(camera.camera);
-	draw_world();
+	draw_world(animationTime);
 	EndMode2D();
 
 	draw_hud();
 }
 
-void Game::draw_world() const {
+void Game::draw_world(float animationTime) const {
 	// the ground
 	DrawLine(
 	    world.leftBound, world.groundY, world.rightBound, world.groundY, BROWN);
@@ -45,7 +48,8 @@ void Game::draw_world() const {
 	for (const Platform &platform : world.platforms)
 		DrawRectangleV(platform.position, platform.size, BROWN);
 
-	draw_player(player);
+	draw_training_dummy(world.trainingDummy, animationTime);
+	draw_player(player, animationTime);
 
 	/* Temporary Visualization of attack hitbox */
 	// TODO: remove later on with proper attack animations

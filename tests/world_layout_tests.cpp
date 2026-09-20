@@ -22,6 +22,17 @@ int main() {
 	                 "prototype should span multiple screen heights");
 	passed &= expect(world.platforms.size() >= 30,
 	                 "prototype should contain a complete climbing route");
+	passed &= expect(world.trainingDummy.size.x > 0.0f &&
+	                     world.trainingDummy.size.y > 0.0f,
+	                 "prototype should contain a visible training dummy");
+	passed &= expect(
+	    world.trainingDummy.position.x >= world.leftBound &&
+	        world.trainingDummy.position.x + world.trainingDummy.size.x <=
+	            world.rightBound &&
+	        world.trainingDummy.position.y >= world.topBound &&
+	        world.trainingDummy.position.y + world.trainingDummy.size.y ==
+	            world.groundY,
+	    "training dummy should stand inside the world bounds");
 
 	const auto outsideBounds = std::ranges::find_if(
 	    world.platforms, [&world](const Platform &platform) {

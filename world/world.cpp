@@ -34,12 +34,14 @@ World::World(float leftBound,
              float rightBound,
              float topBound,
              float groundY,
-             std::vector<Platform> platforms):
+             std::vector<Platform> platforms,
+             TrainingDummy trainingDummy):
     leftBound(leftBound),
     rightBound(rightBound),
     topBound(topBound),
     groundY(groundY),
-    platforms(std::move(platforms)) {}
+    platforms(std::move(platforms)),
+    trainingDummy(trainingDummy) {}
 
 World World::vertical_prototype(float rightBound, float groundY) {
 	const auto y = [groundY](float heightAboveGround) {
@@ -100,6 +102,7 @@ World World::vertical_prototype(float rightBound, float groundY) {
 	        ledge(830.0f, y(1745.0f), 130.0f),
 	        ledge(1030.0f, y(1800.0f), 170.0f),
 	    },
+	    {{600.0f, groundY - 100.0f}, {50.0f, 100.0f}},
 	};
 }
 

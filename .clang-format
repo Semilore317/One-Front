@@ -1,0 +1,37 @@
+BasedOnStyle: LLVM
+
+Language: Cpp
+Standard: C++20
+
+IndentWidth: 4
+TabWidth: 4
+ContinuationIndentWidth: 4
+UseTab: ForIndentation
+
+ColumnLimit: 80
+
+BreakBeforeBraces: Attach
+
+# Constructor initializer lists
+PackConstructorInitializers: Never
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
+SpaceBeforeCtorInitializerColon: false
+
+# pointer/reference style
+# e.g const Controls &controls
+DerivePointerAlignment: false
+PointerAlignment: Right
+ReferenceAlignment: Right
+
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+
+# keep argument/param wrapping variable
+BinpackArguments: false
+BinPackParameters: false
+
+# Miscellaneous
+SortIncludes: CaseSensitive
+IndentCaseLabels: true

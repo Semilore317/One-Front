@@ -1,7 +1,7 @@
 BasedOnStyle: LLVM
 
 Language: Cpp
-Standard: C++20
+Standard: c++20
 
 IndentWidth: 4
 TabWidth: 4
@@ -24,13 +24,13 @@ DerivePointerAlignment: false
 PointerAlignment: Right
 ReferenceAlignment: Right
 
-AllowShortIfStatementsOnASingleLine: Never
-AllowShortLoopsOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: Never 
+AllowShortLoopsOnASingleLine: false 
 AllowShortFunctionsOnASingleLine: Empty
 
 # keep argument/param wrapping variable
-BinpackArguments: false
-BinPackParameters: false
+BinPackArguments: false
+BinPackParameters: OnePerLine 
 
 # Miscellaneous
 SortIncludes: CaseSensitive

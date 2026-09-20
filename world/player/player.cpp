@@ -41,6 +41,24 @@ Player::Player(Vector2 position, Vector2 size):
     maxHealth{DEFAULT_MAX_HEALTH},
     currentHealth{DEFAULT_MAX_HEALTH} {}
 
+// clang-format off
+Rectangle Player::attack_hitbox() const {
+	const float hitBoxX =
+	    facing == Facing::Right
+					? position.x + size.x
+					: position.x - size.x;
+
+	const float hitBoxY = position.y + (size.y - ATTACK_THICKNESS) * 0.5f;
+
+	return {
+		hitBoxX,
+		hitBoxY,
+		ATTACK_THICKNESS,
+		size.y - ATTACK_THICKNESS
+	};
+}
+// clang-format on
+
 void Player::update(float deltaTime,
                     const Controls &controls,
                     float groundY,
@@ -98,7 +116,7 @@ void Player::update(float deltaTime,
 	}
 }
 
-/* Private Helpers */
+/* Private Helpers*/
 
 /* Platforming Helpers */
 void Player::apply_gravity(float deltaTime) {

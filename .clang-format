@@ -32,6 +32,13 @@ AllowShortFunctionsOnASingleLine: Inline
 BinPackArguments: false
 BinPackParameters: OnePerLine 
 
+# ternaries
+BreakBeforeTernaryOperators: true
+AlignOperands: Align
+
+# wrapped braced initilializers
+BracedInitializerIndentWidth: 4
+
 # Miscellaneous
 SortIncludes: CaseSensitive
 IndentCaseLabels: true

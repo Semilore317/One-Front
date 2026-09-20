@@ -9,3 +9,4 @@ out/
 *.pdb
 *.ilk
 .cache/neocmakelsp/
+.compile_commands.json

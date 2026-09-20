@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 4.2)
 
 project(OneFront LANGUAGES C CXX)
 
-SET(CMAKE_CXX_STANDARD 23)
+SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -27,6 +27,8 @@ add_library(
     world/world.cpp
     world/player/player.cpp
     rendering/draw_player.cpp
+    rendering/draw_training_dummy.hpp
+    rendering/draw_training_dummy.cpp
 )
 
 add_executable(

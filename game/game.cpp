@@ -1,5 +1,6 @@
 #include "./game.hpp"
 #include "../rendering/draw_player.hpp"
+#include "../rendering/draw_training_dummy.hpp"
 #include "raylib.h"
 
 constexpr float PLAYER_HEIGHT = 50.0f;
@@ -33,6 +34,9 @@ void Game::draw() const {
   for (const Platform &platform : world.platforms)
     DrawRectangleV(platform.position, platform.size, BROWN);
 
+  const float animationTime = static_cast<float>(GetTime());
+  draw_training_dummy(dummy, animationTime);
+
   /*
   // TEMP: basic visualization until player renderer is merged
   DrawRectangleV(player.position, player.size, RED);
@@ -58,5 +62,5 @@ void Game::draw() const {
   // 4.draw the foreround (currenthealth) scaled by the ratio.
   DrawRectangle(barX, barY, maxBarWidth * healthRatio, barHeight, GREEN);
 
-  draw_player(player);
+  draw_player(player, animationTime);
 }

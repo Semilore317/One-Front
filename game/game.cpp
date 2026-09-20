@@ -51,7 +51,7 @@ void Game::draw() const {
 
 	/* Temporary Visualization of attack hitbox */
 	// TODO: remove later on with proper attack animations
-	if(player.isAttacking){
+	if (player.isAttacking) {
 		DrawRectangleRec(player.attack_hitbox(), Fade(RED, 0.45f));
 	}
 }

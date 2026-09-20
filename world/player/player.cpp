@@ -14,13 +14,13 @@ constexpr float JUMP_SPEED = 300.0f;
 // Combat
 constexpr float ATTACK_DURATION = 0.2f;
 constexpr float ATTACK_COOLDOWN = 0.5f;
-constexpr float ATTACK_REACH = 25.0f; 
+constexpr float ATTACK_REACH = 25.0f;
 constexpr float ATTACK_THICKNESS = 20.0f;
 
 Player::Player():
-    position{0,0},
-    velocity{0,0},
-    size{1,1},
+    position{0, 0},
+    velocity{0, 0},
+    size{1, 1},
     facing{Facing::Right},
     isGrounded{true},
     isAttacking{false},
@@ -31,7 +31,7 @@ Player::Player():
 
 Player::Player(Vector2 position, Vector2 size):
     position{position},
-    velocity{0,0},
+    velocity{0, 0},
     size{size},
     facing{Facing::Right},
     isGrounded{true},
@@ -47,7 +47,7 @@ void Player::update(float deltaTime,
                     float leftBound,
                     float rightBound,
                     const std::vector<Platform> &platforms) {
-<<<<<<< HEAD
+	update_attack(deltaTime, controls);
 
 	// horizontal movement
 	if (IsKeyDown(controls.left)) {
@@ -58,18 +58,6 @@ void Player::update(float deltaTime,
 		facing = Facing::Right;
 	} else
 		velocity.x = 0;
-=======
-    update_attack(deltaTime, controls);
-  // horizontal movement
-  if (IsKeyDown(controls.left)) {
-    velocity.x = -DEFAULT_MOVE_SPEED;
-    facing = Facing::Left;
-  } else if (IsKeyDown(controls.right)) {
-    velocity.x = DEFAULT_MOVE_SPEED;
-    facing = Facing::Right;
-  } else
-    velocity.x = 0;
->>>>>>> 5f1125d (feat: added helper for updating attacks)
 
 	float previousX = position.x;
 
@@ -110,7 +98,7 @@ void Player::update(float deltaTime,
 	}
 }
 
-/* Private Helpers*/
+/* Private Helpers */
 
 /* Platforming Helpers */
 void Player::apply_gravity(float deltaTime) {
@@ -211,15 +199,16 @@ bool Player::overlaps_vertically(const Platform &platform) const {
 }
 
 /* Combat Helpers */
-void Player::update_attack(float deltaTime, const Controls &controls){
-   attackTimeRemaining = std::max(0.0f, attackTimeRemaining - deltaTime);
-   attackCooldownRemaining = std::max(0.0f, attackCooldownRemaining - deltaTime);
+void Player::update_attack(float deltaTime, const Controls &controls) {
+	attackTimeRemaining = std::max(0.0f, attackTimeRemaining - deltaTime);
+	attackCooldownRemaining =
+	    std::max(0.0f, attackCooldownRemaining - deltaTime);
 
-   isAttacking = attackTimeRemaining > 0;
+	isAttacking = attackTimeRemaining > 0;
 
-   if(IsKeyPressed(controls.attack1) && attackCooldownRemaining == 0.0f){
-       attackTimeRemaining = ATTACK_DURATION;
-       attackCooldownRemaining = ATTACK_COOLDOWN;
-       isAttacking = true;
-   }
+	if (IsKeyPressed(controls.attack1) && attackCooldownRemaining == 0.0f) {
+		attackTimeRemaining = ATTACK_DURATION;
+		attackCooldownRemaining = ATTACK_COOLDOWN;
+		isAttacking = true;
+	}
 }

@@ -11,27 +11,30 @@ struct Player {
 	Player();
 	Player(Vector2 position, Vector2 size);
 
-  Vector2 position;
-  Vector2 velocity;
-  Vector2 size;
+	Vector2 position;
+	Vector2 velocity;
+	Vector2 size;
 
-  Facing facing;
-  bool isGrounded;
+	Facing facing;
+	bool isGrounded;
 
-  bool isAttacking;
-  float attackTimeRemaining;
-  float attackCooldownRemaining;
+	bool isAttacking;
+	float attackTimeRemaining;
+	float attackCooldownRemaining;
 
-  float maxHealth;
-  float currentHealth;
+	float maxHealth;
+	float currentHealth;
 
-  Rectangle attack_hitbox() const;
-  void update(float deltaTime, const Controls &controls, float groundY,
-              float leftBound, float rightBound,
-              const std::vector<Platform> &platforms);
+	Rectangle attack_hitbox() const;
+	void update(float deltaTime,
+	            const Controls &controls,
+	            float groundY,
+	            float leftBound,
+	            float rightBound,
+	            const std::vector<Platform> &platforms);
 
-<<<<<<< HEAD
   private:
+	// Platforming Helpers
 	void apply_gravity(float deltaTime);
 	bool is_on_surface(float groundY,
 	                   const std::vector<Platform> &platforms) const;
@@ -46,24 +49,7 @@ struct Player {
 	                                    const std::vector<Platform> &platforms);
 	bool overlaps_horizontally(const Platform &platform) const;
 	bool overlaps_vertically(const Platform &platform) const;
-=======
-private:
-  // Platforming Helpers
-  void apply_gravity(float deltaTime);
-  bool is_on_surface(float groundY,
-                     const std::vector<Platform> &platforms) const;
-  void handle_platform_landing(float previousBottom, float currentBottom,
-                               const std::vector<Platform> &platforms);
-  void
-  handle_platform_horizontal_collision(float previousX,
-                                       const std::vector<Platform> &platforms);
-  void
-  handle_platform_underside_collision(float previousTop, float currentTop,
-                                      const std::vector<Platform> &platforms);
-  bool overlaps_horizontally(const Platform &platform) const;
-  bool overlaps_vertically(const Platform &platform) const;
 
-  // Combat Helpers
-  void update_attack(float deltaTime, const Controls &controls);
->>>>>>> 5f1125d (feat: added helper for updating attacks)
+	// Combat Helpers
+	void update_attack(float deltaTime, const Controls &controls);
 };

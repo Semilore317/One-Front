@@ -14,7 +14,7 @@ struct Platform {
 	float direction{1.0f};
 
 	Vector2 movementDelta{0.0f, 0.0f};
-	
+
 	void update(float deltaTime);
 
 	float left() const { return position.x; }

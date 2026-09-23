@@ -26,6 +26,7 @@ add_library(
     game/controls.cpp
     world/world.cpp
     world/player/player.cpp
+    world/platform/platform.cpp
     rendering/draw_player.cpp
 )
 

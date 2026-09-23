@@ -9,4 +9,6 @@ struct World {
 	float rightBound;
 	float groundY;
 	std::vector<Platform> platforms;
+
+	void update(float deltaTime);
 };

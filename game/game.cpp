@@ -18,6 +18,7 @@ Game::Game():
 
 void Game::update(float deltaTime) {
 	// update things belonging to the game
+	world.update(deltaTime);
 	player.update(deltaTime,
 	              controls,
 	              world.groundY,

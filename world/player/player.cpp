@@ -67,6 +67,11 @@ void Player::update(float deltaTime,
                     const std::vector<Platform> &platforms) {
 	update_attack(deltaTime, controls);
 
+	const float previousX = position.x;
+
+	// inherit movement from a moving platform
+	apply_platform_movement(platforms);
+
 	// horizontal movement
 	if (IsKeyDown(controls.left)) {
 		velocity.x = -DEFAULT_MOVE_SPEED;
@@ -77,11 +82,11 @@ void Player::update(float deltaTime,
 	} else
 		velocity.x = 0;
 
-	float previousX = position.x;
-
 	position.x += velocity.x * deltaTime;
 	position.x = std::clamp(position.x, leftBound, rightBound - size.x);
+
 	handle_platform_horizontal_collision(previousX, platforms);
+	position.x = std::clamp(position.x, leftBound, rightBound - size.x);
 
 	// is the avatar standing on something?
 	isGrounded = is_on_surface(groundY, platforms);
@@ -159,29 +164,47 @@ void Player::handle_platform_landing(float previousBottom,
 
 void Player::handle_platform_horizontal_collision(
     float previousX, const std::vector<Platform> &platforms) {
+	const float previousPlayerLeft = previousX;
+	const float previousPlayerRight = previousX + size.x;
+
+	const float currentPlayerLeft = position.x;
+	const float currentPlayerRight = position.x + size.x;
+
+	const float playerMovement = position.x - previousX;
+
 	for (const Platform &platform : platforms) {
-		float previousLeft = previousX;
-		float previousRight = previousLeft + size.x;
-
-		float currentRight = position.x + size.x;
-		float currentLeft = position.x;
-
 		if (!overlaps_vertically(platform))
 			continue;
 
-		// moving right into platform's left side
-		if (velocity.x > 0 && previousRight <= platform.left() &&
-		    currentRight >= platform.left()) {
+		const float platformMovement = platform.movementDelta.x;
+
+		const float previousPlatformLeft = platform.left() - platformMovement;
+		const float previousPlatformRight = platform.right() - platformMovement;
+
+		const float relativeMovement = playerMovement - platformMovement;
+
+		const bool overlapsNow = currentPlayerRight > platform.left() &&
+		                         currentPlayerLeft < platform.right();
+
+		const bool crossedLeftEdge =
+		    previousPlayerRight <= previousPlatformLeft &&
+		    currentPlayerRight >= platform.left();
+
+		const bool crossedRightEdge =
+		    previousPlayerLeft >= previousPlatformRight &&
+		    currentPlayerLeft <= platform.right();
+
+		// approaching platform's left side
+		if (relativeMovement > 0.0f && (crossedLeftEdge || overlapsNow)) {
 			position.x = platform.left() - size.x;
-			velocity.x = 0;
+			velocity.x = 0.0f;
 			break;
 		}
 
-		// moving left into platform's right side
-		if (velocity.x < 0 && previousLeft >= platform.right() &&
-		    currentLeft <= platform.right()) {
+		// approaching platform's right side
+		if (relativeMovement < 0.0f && (crossedRightEdge || overlapsNow)) {
 			position.x = platform.right();
-			velocity.x = 0;
+			velocity.x = 0.0f;
 			break;
 		}
 	}
@@ -214,6 +237,23 @@ bool Player::overlaps_horizontally(const Platform &platform) const {
 bool Player::overlaps_vertically(const Platform &platform) const {
 	return position.y + size.y > platform.top() &&
 	       position.y < platform.bottom();
+}
+
+void Player::apply_platform_movement(const std::vector<Platform> &platforms) {
+	for (const Platform &platform : platforms) {
+		if (platform.movementDelta.x == 0.0f)
+			continue;
+
+		const float previousLeft = platform.left() - platform.movementDelta.x;
+		const float previousRight = platform.right() - platform.movementDelta.x;
+		const bool wasOnPlatform = position.y + size.y == platform.top();
+		const bool overlappedPreviously =
+		    position.x + size.x > previousLeft && position.x < previousRight;
+		if (wasOnPlatform && overlappedPreviously) {
+			position.x += platform.movementDelta.x;
+			break;
+		}
+	}
 }
 
 /* Combat Helpers */

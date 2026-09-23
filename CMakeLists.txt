@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 4.2)
 
 project(OneFront LANGUAGES C CXX)
 
-SET(CMAKE_CXX_STANDARD 23)
+SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -26,6 +26,7 @@ add_library(
     game/controls.cpp
     world/world.cpp
     world/player/player.cpp
+    world/platform/platform.cpp
     rendering/draw_player.cpp
 )
 

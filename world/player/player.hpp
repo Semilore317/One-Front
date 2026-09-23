@@ -49,6 +49,7 @@ struct Player {
 	                                    const std::vector<Platform> &platforms);
 	bool overlaps_horizontally(const Platform &platform) const;
 	bool overlaps_vertically(const Platform &platform) const;
+	void apply_platform_movement(const std::vector<Platform> &platforms);
 
 	// Combat Helpers
 	void update_attack(float deltaTime, const Controls &controls);

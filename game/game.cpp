@@ -13,7 +13,7 @@ Game::Game():
         WINDOW_HEIGHT - GROUND_OFFSET,
     },
     player{{PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},
-	       {PLAYER_WIDTH, PLAYER_HEIGHT}},
+           {PLAYER_WIDTH, PLAYER_HEIGHT}},
     controls{WASD_Controls} {}
 
 void Game::update(float deltaTime) {

@@ -10,6 +10,7 @@ constexpr float DEFAULT_MAX_HEALTH = 100.0f;
 constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 400px per second
 constexpr float GRAVITY = 600.0f;
 constexpr float JUMP_SPEED = 300.0f;
+constexpr float FAST_FALL_SPEED = 700.0f;
 
 // Combat
 constexpr float ATTACK_DURATION = 0.2f;
@@ -107,8 +108,10 @@ void Player::update(float deltaTime,
 	}
 
 	// gravity
-	if (!isGrounded)
+	if (!isGrounded) {
 		apply_gravity(deltaTime);
+		apply_fast_fall(controls);
+	}
 
 	float previousTop = position.y;
 	float previousBottom = position.y + size.y;
@@ -195,6 +198,13 @@ bool Player::can_stand(const std::vector<Platform> &platforms) const {
 /* Platforming Helpers */
 void Player::apply_gravity(float deltaTime) {
 	velocity.y += GRAVITY * deltaTime;
+}
+
+void Player::apply_fast_fall(const Controls &controls) {
+	if (isGrounded || !IsKeyPressed(controls.down))
+		return;
+
+	velocity.y += std::max(velocity.y, FAST_FALL_SPEED);
 }
 
 bool Player::is_on_surface(float groundY,

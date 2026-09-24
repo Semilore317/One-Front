@@ -46,6 +46,7 @@ struct Player {
 
 	// Platforming Helpers
 	void apply_gravity(float deltaTime);
+	void apply_fast_fall(const Controls &controls);
 	[[nodiscard]]
 	bool is_on_surface(float groundY,
 	                   const std::vector<Platform> &platforms) const;

@@ -22,6 +22,7 @@ struct Player {
 
 	bool isAttacking;
 	AttackDirection attackDirection;
+	bool hasTriggeredRecoil;
 	float attackTimeRemaining;
 	float attackCooldownRemaining;
 
@@ -66,7 +67,8 @@ struct Player {
 
 	// Combat Helpers
 	bool update_attack(float deltaTime, const Controls &controls);
-	[[nodiscard]] AttackDirection
-	get_attack_direction(const Controls &controls) const;
+	[[nodiscard]]
+	AttackDirection get_attack_direction(const Controls &controls) const;
 	void start_attack(AttackDirection direction);
+	void apply_downward_attack_recoil(const std::vector<Platform> &platforms);
 };

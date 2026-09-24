@@ -4,22 +4,24 @@
 #include <vector>
 
 // Player stats
-constexpr float DEFAULT_MAX_HEALTH = 100.0f;
+constexpr float DEFAULT_MAX_HEALTH{100.0f};
 
 // Movement
-constexpr float DEFAULT_MOVE_SPEED = 400.0f; // 400px per second
-constexpr float GRAVITY = 600.0f;
-constexpr float JUMP_SPEED = 300.0f;
-constexpr float FAST_FALL_SPEED = 700.0f;
+constexpr float DEFAULT_MOVE_SPEED{400.0f};
+constexpr float GRAVITY{600.0f};
+constexpr float JUMP_SPEED{300.0f};
+constexpr float FAST_FALL_SPEED{700.0f};
 
 // Combat
-constexpr float ATTACK_DURATION = 0.2f;
-constexpr float ATTACK_COOLDOWN = 0.5f;
-constexpr float ATTACK_REACH = 25.0f;
-constexpr float ATTACK_THICKNESS = 20.0f;
+constexpr float ATTACK_DURATION{0.2f};
+constexpr float ATTACK_COOLDOWN{0.5f};
+constexpr float ATTACK_REACH{25.0f};
+constexpr float ATTACK_THICKNESS{20.0f};
+
+constexpr float DOWNWARD_ATTACK_RECOIL{350.0f};
 
 // Crouching
-constexpr float CROUCH_HEIGHT_RATIO = 0.6f;
+constexpr float CROUCH_HEIGHT_RATIO{0.6f};
 
 Player::Player():
     position{.x = 0, .y = 0},
@@ -30,6 +32,7 @@ Player::Player():
     isCrouching{false},
     isAttacking{false},
     attackDirection{AttackDirection::Right},
+    hasTriggeredRecoil{false},
     attackTimeRemaining{0.0f},
     attackCooldownRemaining{0.0f},
     maxHealth{DEFAULT_MAX_HEALTH},
@@ -45,6 +48,7 @@ Player::Player(const Vector2 position, const Vector2 size):
     isCrouching{false},
     isAttacking{false},
     attackDirection{AttackDirection::Right},
+    hasTriggeredRecoil{false},
     attackTimeRemaining{0.0f},
     attackCooldownRemaining{0.0f},
     maxHealth{DEFAULT_MAX_HEALTH},
@@ -102,8 +106,9 @@ void Player::update(float deltaTime,
 	} else if (IsKeyDown(controls.right)) {
 		velocity.x = DEFAULT_MOVE_SPEED;
 		facing = Facing::Right;
-	} else
+	} else {
 		velocity.x = 0;
+	}
 
 	position.x += velocity.x * deltaTime;
 	position.x = std::clamp(position.x, leftBound, rightBound - size.x);
@@ -123,8 +128,8 @@ void Player::update(float deltaTime,
 	// jumping
 	// an upward attack takes priority over jumping when both inputs
 	// are pressed on the same frame
-	if (IsKeyPressed(controls.jump) && !attackStarted && isGrounded &&
-	    !isCrouching) {
+	if (IsKeyPressed(controls.jump) && !attackStarted &&
+	    isGrounded && !isCrouching) {
 		velocity.y = -JUMP_SPEED;
 		isGrounded = false;
 	}
@@ -135,17 +140,24 @@ void Player::update(float deltaTime,
 		apply_fast_fall(controls);
 	}
 
-	float previousTop = position.y;
-	float previousBottom = position.y + size.y;
+	const float previousTop = position.y;
+	const float previousBottom = position.y + size.y;
 
 	position.y += velocity.y * deltaTime;
 
-	float currentTop = position.y;
-	float currentBottom = position.y + size.y;
+	const float currentTop = position.y;
+	const float currentBottom = position.y + size.y;
+
+	// downward attacks can bounce off a platform before normal
+	// landing collision resolves the player onto it
+	apply_downward_attack_recoil(platforms);
 
 	// platform logic
-	handle_platform_underside_collision(previousTop, currentTop, platforms);
-	handle_platform_landing(previousBottom, currentBottom, platforms);
+	handle_platform_underside_collision(
+	    previousTop, currentTop, platforms);
+
+	handle_platform_landing(
+	    previousBottom, currentBottom, platforms);
 
 	// ground landing
 	if (position.y + size.y >= groundY) {
@@ -406,7 +418,36 @@ AttackDirection Player::get_attack_direction(const Controls &controls) const {
 
 void Player::start_attack(AttackDirection direction) {
 	attackDirection = direction;
+	hasTriggeredRecoil = false;
 	attackTimeRemaining = ATTACK_DURATION;
 	attackCooldownRemaining = ATTACK_COOLDOWN;
 	isAttacking = true;
+}
+
+void Player::apply_downward_attack_recoil(
+    const std::vector<Platform> &platforms) {
+
+	if (!isAttacking || attackDirection != AttackDirection::Down ||
+	    hasTriggeredRecoil)
+		return;
+
+	const Rectangle hitbox = attack_hitbox();
+
+	for (const Platform &platform : platforms) {
+		const bool overlapsHorizontally =
+		    hitbox.x + hitbox.width > platform.left() &&
+		    hitbox.x < platform.right();
+
+		const bool reachesPlatformTop =
+		    hitbox.y <= platform.top() &&
+		    hitbox.y + hitbox.height >= platform.top();
+
+		if (!overlapsHorizontally || !reachesPlatformTop)
+			continue;
+
+		velocity.y = -DOWNWARD_ATTACK_RECOIL;
+		isGrounded = false;
+		hasTriggeredRecoil = true;
+		break;
+	}
 }

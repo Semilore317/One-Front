@@ -56,36 +56,28 @@ Rectangle Player::attack_hitbox() const {
 
 	switch (attackDirection) {
 		case AttackDirection::Right:
-			return {
-			    position.x + size.x,
-			    position.y + (size.y - horizontalHitboxHeight) * 0.5f,
-			    ATTACK_REACH,
-			    horizontalHitboxHeight
-			};
+			return {position.x + size.x,
+			        position.y + (size.y - horizontalHitboxHeight) * 0.5f,
+			        ATTACK_REACH,
+			        horizontalHitboxHeight};
 
 		case AttackDirection::Left:
-			return {
-			    position.x - ATTACK_REACH,
-			    position.y + (size.y - horizontalHitboxHeight) * 0.5f,
-			    ATTACK_REACH,
-			    horizontalHitboxHeight
-			};
+			return {position.x - ATTACK_REACH,
+			        position.y + (size.y - horizontalHitboxHeight) * 0.5f,
+			        ATTACK_REACH,
+			        horizontalHitboxHeight};
 
 		case AttackDirection::Up:
-			return {
-			    position.x + (size.x - ATTACK_THICKNESS) * 0.5f,
-			    position.y - ATTACK_REACH,
-			    ATTACK_THICKNESS,
-			    ATTACK_REACH
-			};
+			return {position.x + (size.x - ATTACK_THICKNESS) * 0.5f,
+			        position.y - ATTACK_REACH,
+			        ATTACK_THICKNESS,
+			        ATTACK_REACH};
 
 		case AttackDirection::Down:
-			return {
-			    position.x + (size.x - ATTACK_THICKNESS) * 0.5f,
-			    position.y + size.y,
-			    ATTACK_THICKNESS,
-			    ATTACK_REACH
-			};
+			return {position.x + (size.x - ATTACK_THICKNESS) * 0.5f,
+			        position.y + size.y,
+			        ATTACK_THICKNESS,
+			        ATTACK_REACH};
 	}
 
 	return {};
@@ -216,8 +208,7 @@ bool Player::can_stand(const std::vector<Platform> &platforms) const {
 		    position.x < platform.right();
 
 		const bool overlapsVertically =
-		    standingBottom > platform.top() &&
-		    standingTop < platform.bottom();
+		    standingBottom > platform.top() && standingTop < platform.bottom();
 
 		if (overlapsHorizontally && overlapsVertically)
 			return false;
@@ -259,16 +250,14 @@ bool Player::is_on_surface(float groundY,
 	return supported;
 }
 
-void Player::handle_platform_landing(
-    float previousBottom,
-    float currentBottom,
-    const std::vector<Platform> &platforms) {
+void Player::handle_platform_landing(float previousBottom,
+                                     float currentBottom,
+                                     const std::vector<Platform> &platforms) {
 
 	for (const Platform &platform : platforms) {
 		bool isFalling = velocity.y > 0;
 		bool crossedPlatformTop =
-		    previousBottom <= platform.top() &&
-		    currentBottom >= platform.top();
+		    previousBottom <= platform.top() && currentBottom >= platform.top();
 
 		if (isFalling && crossedPlatformTop &&
 		    overlaps_horizontally(platform)) {
@@ -281,8 +270,7 @@ void Player::handle_platform_landing(
 }
 
 void Player::handle_platform_horizontal_collision(
-    float previousX,
-    const std::vector<Platform> &platforms) {
+    float previousX, const std::vector<Platform> &platforms) {
 
 	const float previousPlayerLeft = previousX;
 	const float previousPlayerRight = previousX + size.x;
@@ -298,17 +286,13 @@ void Player::handle_platform_horizontal_collision(
 
 		const float platformMovement = platform.movementDelta.x;
 
-		const float previousPlatformLeft =
-		    platform.left() - platformMovement;
-		const float previousPlatformRight =
-		    platform.right() - platformMovement;
+		const float previousPlatformLeft = platform.left() - platformMovement;
+		const float previousPlatformRight = platform.right() - platformMovement;
 
-		const float relativeMovement =
-		    playerMovement - platformMovement;
+		const float relativeMovement = playerMovement - platformMovement;
 
-		const bool overlapsNow =
-		    currentPlayerRight > platform.left() &&
-		    currentPlayerLeft < platform.right();
+		const bool overlapsNow = currentPlayerRight > platform.left() &&
+		                         currentPlayerLeft < platform.right();
 
 		const bool crossedLeftEdge =
 		    previousPlayerRight <= previousPlatformLeft &&
@@ -319,16 +303,14 @@ void Player::handle_platform_horizontal_collision(
 		    currentPlayerLeft <= platform.right();
 
 		// approaching platform's left side
-		if (relativeMovement > 0.0f &&
-		    (crossedLeftEdge || overlapsNow)) {
+		if (relativeMovement > 0.0f && (crossedLeftEdge || overlapsNow)) {
 			position.x = platform.left() - size.x;
 			velocity.x = 0.0f;
 			break;
 		}
 
 		// approaching platform's right side
-		if (relativeMovement < 0.0f &&
-		    (crossedRightEdge || overlapsNow)) {
+		if (relativeMovement < 0.0f && (crossedRightEdge || overlapsNow)) {
 			position.x = platform.right();
 			velocity.x = 0.0f;
 			break;
@@ -345,8 +327,7 @@ void Player::handle_platform_underside_collision(
 		bool isRising = velocity.y < 0;
 
 		bool crossedPlatformBottom =
-		    previousTop >= platform.bottom() &&
-		    currentTop <= platform.bottom();
+		    previousTop >= platform.bottom() && currentTop <= platform.bottom();
 
 		if (isRising && crossedPlatformBottom &&
 		    overlaps_horizontally(platform)) {
@@ -367,24 +348,19 @@ bool Player::overlaps_vertically(const Platform &platform) const {
 	       position.y < platform.bottom();
 }
 
-void Player::apply_platform_movement(
-    const std::vector<Platform> &platforms) {
+void Player::apply_platform_movement(const std::vector<Platform> &platforms) {
 
 	for (const Platform &platform : platforms) {
 		if (platform.movementDelta.x == 0.0f)
 			continue;
 
-		const float previousLeft =
-		    platform.left() - platform.movementDelta.x;
-		const float previousRight =
-		    platform.right() - platform.movementDelta.x;
+		const float previousLeft = platform.left() - platform.movementDelta.x;
+		const float previousRight = platform.right() - platform.movementDelta.x;
 
-		const bool wasOnPlatform =
-		    position.y + size.y == platform.top();
+		const bool wasOnPlatform = position.y + size.y == platform.top();
 
 		const bool overlappedPreviously =
-		    position.x + size.x > previousLeft &&
-		    position.x < previousRight;
+		    position.x + size.x > previousLeft && position.x < previousRight;
 
 		if (wasOnPlatform && overlappedPreviously) {
 			position.x += platform.movementDelta.x;
@@ -395,8 +371,7 @@ void Player::apply_platform_movement(
 
 /* Combat Helpers */
 bool Player::update_attack(float deltaTime, const Controls &controls) {
-	attackTimeRemaining =
-	    std::max(0.0f, attackTimeRemaining - deltaTime);
+	attackTimeRemaining = std::max(0.0f, attackTimeRemaining - deltaTime);
 
 	attackCooldownRemaining =
 	    std::max(0.0f, attackCooldownRemaining - deltaTime);
@@ -416,8 +391,7 @@ bool Player::update_attack(float deltaTime, const Controls &controls) {
 	return true;
 }
 
-AttackDirection
-Player::get_attack_direction(const Controls &controls) const {
+AttackDirection Player::get_attack_direction(const Controls &controls) const {
 	// down attacks are only available while airborne
 	if (!isGrounded && IsKeyDown(controls.down))
 		return AttackDirection::Down;
@@ -426,9 +400,8 @@ Player::get_attack_direction(const Controls &controls) const {
 	if (IsKeyDown(controls.jump))
 		return AttackDirection::Up;
 
-	return facing == Facing::Right
-	           ? AttackDirection::Right
-	           : AttackDirection::Left;
+	return facing == Facing::Right ? AttackDirection::Right
+	                               : AttackDirection::Left;
 }
 
 void Player::start_attack(AttackDirection direction) {

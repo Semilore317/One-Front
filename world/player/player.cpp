@@ -17,17 +17,22 @@ constexpr float ATTACK_COOLDOWN = 0.5f;
 constexpr float ATTACK_REACH = 25.0f;
 constexpr float ATTACK_THICKNESS = 20.0f;
 
+// Crouching
+constexpr float CROUCH_HEIGHT_RATIO = 0.6f;
+
 Player::Player():
     position{0, 0},
     velocity{0, 0},
     size{1, 1},
     facing{Facing::Right},
     isGrounded{true},
+    isCrouching{false},
     isAttacking{false},
     attackTimeRemaining{0.0f},
     attackCooldownRemaining{0.0f},
     maxHealth{DEFAULT_MAX_HEALTH},
-    currentHealth{DEFAULT_MAX_HEALTH} {}
+    currentHealth{DEFAULT_MAX_HEALTH},
+    standingHeight{1.0f} {}
 
 Player::Player(Vector2 position, Vector2 size):
     position{position},
@@ -35,11 +40,13 @@ Player::Player(Vector2 position, Vector2 size):
     size{size},
     facing{Facing::Right},
     isGrounded{true},
+    isCrouching{false},
     isAttacking{false},
     attackTimeRemaining{0.0f},
     attackCooldownRemaining{0.0f},
     maxHealth{DEFAULT_MAX_HEALTH},
-    currentHealth{DEFAULT_MAX_HEALTH} {}
+    currentHealth{DEFAULT_MAX_HEALTH},
+    standingHeight{size.y} {}
 
 // clang-format off
 Rectangle Player::attack_hitbox() const {
@@ -91,8 +98,10 @@ void Player::update(float deltaTime,
 	// is the avatar standing on something?
 	isGrounded = is_on_surface(groundY, platforms);
 
+	update_crouch(controls, platforms);
+
 	// jumping
-	if (IsKeyPressed(controls.jump) && isGrounded) {
+	if (IsKeyPressed(controls.jump) && isGrounded && !isCrouching) {
 		velocity.y = -JUMP_SPEED;
 		isGrounded = false;
 	}
@@ -122,6 +131,66 @@ void Player::update(float deltaTime,
 }
 
 /* Private Helpers*/
+
+/* Crouch Helpers*/
+void Player::update_crouch(const Controls &controls,
+                           const std::vector<Platform> &platforms) {
+	if (!isGrounded) {
+		if (isCrouching && can_stand(platforms))
+			stand_up();
+		return;
+	}
+
+	if (IsKeyDown(controls.down)) {
+		crouch();
+		return;
+	}
+
+	if (isCrouching && can_stand(platforms))
+		stand_up();
+
+}
+void Player::crouch() {
+	if (isCrouching)
+		return;
+
+	const float crouchHeight = standingHeight * CROUCH_HEIGHT_RATIO;
+	const float heightDifference = size.y - crouchHeight;
+
+	position.y += heightDifference;
+	size.y = crouchHeight;
+	isCrouching = true;
+}
+
+void Player::stand_up() {
+	if (!isCrouching)
+		return;
+
+	const float heightDifference = standingHeight - size.y;
+
+	position.y -= heightDifference;
+	size.y = standingHeight;
+	isCrouching = false;
+}
+
+bool Player::can_stand(const std::vector<Platform> &platforms) const {
+	const float standingTop = position.y - (standingHeight - size.y);
+	const float standingBottom = position.y + size.y;
+
+	for (const Platform &platform : platforms) {
+		const bool overlapsHorizontally =
+		    position.x + size.x > platform.left() &&
+		    position.x < platform.right();
+
+		const bool overlapsVertically =
+		    standingBottom > platform.top() && standingTop < platform.bottom();
+
+		if (overlapsHorizontally && overlapsVertically)
+			return false;
+	}
+
+	return true;
+}
 
 /* Platforming Helpers */
 void Player::apply_gravity(float deltaTime) {

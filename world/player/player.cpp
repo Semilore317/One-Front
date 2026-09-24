@@ -151,7 +151,6 @@ void Player::update_crouch(const Controls &controls,
 
 	if (isCrouching && can_stand(platforms))
 		stand_up();
-
 }
 void Player::crouch() {
 	if (isCrouching)

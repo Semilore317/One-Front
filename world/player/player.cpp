@@ -128,8 +128,8 @@ void Player::update(float deltaTime,
 	// jumping
 	// an upward attack takes priority over jumping when both inputs
 	// are pressed on the same frame
-	if (IsKeyPressed(controls.jump) && !attackStarted &&
-	    isGrounded && !isCrouching) {
+	if (IsKeyPressed(controls.jump) && !attackStarted && isGrounded &&
+	    !isCrouching) {
 		velocity.y = -JUMP_SPEED;
 		isGrounded = false;
 	}
@@ -153,11 +153,9 @@ void Player::update(float deltaTime,
 	apply_downward_attack_recoil(platforms);
 
 	// platform logic
-	handle_platform_underside_collision(
-	    previousTop, currentTop, platforms);
+	handle_platform_underside_collision(previousTop, currentTop, platforms);
 
-	handle_platform_landing(
-	    previousBottom, currentBottom, platforms);
+	handle_platform_landing(previousBottom, currentBottom, platforms);
 
 	// ground landing
 	if (position.y + size.y >= groundY) {

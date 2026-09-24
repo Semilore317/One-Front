@@ -204,7 +204,7 @@ void Player::apply_fast_fall(const Controls &controls) {
 	if (isGrounded || !IsKeyPressed(controls.down))
 		return;
 
-	velocity.y += std::max(velocity.y, FAST_FALL_SPEED);
+	velocity.y = std::max(velocity.y, FAST_FALL_SPEED);
 }
 
 bool Player::is_on_surface(float groundY,

@@ -6,6 +6,7 @@
 #include <vector>
 
 enum class Facing { Left, Right };
+enum class AttackDirection { Left, Right, Up, Down };
 
 struct Player {
 	Player();
@@ -20,6 +21,7 @@ struct Player {
 	bool isCrouching;
 
 	bool isAttacking;
+	AttackDirection attackDirection;
 	float attackTimeRemaining;
 	float attackCooldownRemaining;
 
@@ -42,14 +44,13 @@ struct Player {
 	                   const std::vector<Platform> &platforms);
 	void crouch();
 	void stand_up();
-	bool can_stand(const std::vector<Platform> &platforms) const;
+	[[nodiscard]] bool can_stand(const std::vector<Platform> &platforms) const;
 
 	// Platforming Helpers
 	void apply_gravity(float deltaTime);
 	void apply_fast_fall(const Controls &controls);
-	[[nodiscard]]
-	bool is_on_surface(float groundY,
-	                   const std::vector<Platform> &platforms) const;
+	[[nodiscard]] bool
+	is_on_surface(float groundY, const std::vector<Platform> &platforms) const;
 	void handle_platform_landing(float previousBottom,
 	                             float currentBottom,
 	                             const std::vector<Platform> &platforms);
@@ -64,5 +65,8 @@ struct Player {
 	void apply_platform_movement(const std::vector<Platform> &platforms);
 
 	// Combat Helpers
-	void update_attack(float deltaTime, const Controls &controls);
+	bool update_attack(float deltaTime, const Controls &controls);
+	[[nodiscard]] AttackDirection
+	get_attack_direction(const Controls &controls) const;
+	void start_attack(AttackDirection direction);
 };

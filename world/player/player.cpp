@@ -22,50 +22,66 @@ constexpr float ATTACK_THICKNESS = 20.0f;
 constexpr float CROUCH_HEIGHT_RATIO = 0.6f;
 
 Player::Player():
-    position{0, 0},
-    velocity{0, 0},
-    size{1, 1},
+    position{.x = 0, .y = 0},
+    velocity{.x = 0, .y = 0},
+    size{.x = 1, .y = 1},
     facing{Facing::Right},
     isGrounded{true},
     isCrouching{false},
     isAttacking{false},
+    attackDirection{AttackDirection::Right},
     attackTimeRemaining{0.0f},
     attackCooldownRemaining{0.0f},
     maxHealth{DEFAULT_MAX_HEALTH},
     currentHealth{DEFAULT_MAX_HEALTH},
     standingHeight{1.0f} {}
 
-Player::Player(Vector2 position, Vector2 size):
+Player::Player(const Vector2 position, const Vector2 size):
     position{position},
-    velocity{0, 0},
+    velocity{.x = 0, .y = 0},
     size{size},
     facing{Facing::Right},
     isGrounded{true},
     isCrouching{false},
     isAttacking{false},
+    attackDirection{AttackDirection::Right},
     attackTimeRemaining{0.0f},
     attackCooldownRemaining{0.0f},
     maxHealth{DEFAULT_MAX_HEALTH},
     currentHealth{DEFAULT_MAX_HEALTH},
     standingHeight{size.y} {}
 
-// clang-format off
 Rectangle Player::attack_hitbox() const {
-	const float hitBoxX =
-	    facing == Facing::Right
-					? position.x + size.x
-					: position.x - size.x;
+	const float horizontalHitboxHeight = size.y - ATTACK_THICKNESS;
 
-	const float hitBoxY = position.y + (size.y - ATTACK_THICKNESS) * 0.5f;
+	switch (attackDirection) {
+		case AttackDirection::Right:
+			return {position.x + size.x,
+			        position.y + (size.y - horizontalHitboxHeight) * 0.5f,
+			        ATTACK_REACH,
+			        horizontalHitboxHeight};
 
-	return {
-		hitBoxX,
-		hitBoxY,
-		ATTACK_THICKNESS,
-		size.y - ATTACK_THICKNESS
-	};
+		case AttackDirection::Left:
+			return {position.x - ATTACK_REACH,
+			        position.y + (size.y - horizontalHitboxHeight) * 0.5f,
+			        ATTACK_REACH,
+			        horizontalHitboxHeight};
+
+		case AttackDirection::Up:
+			return {position.x + (size.x - ATTACK_THICKNESS) * 0.5f,
+			        position.y - ATTACK_REACH,
+			        ATTACK_THICKNESS,
+			        ATTACK_REACH};
+
+		case AttackDirection::Down:
+			return {position.x + (size.x - ATTACK_THICKNESS) * 0.5f,
+			        position.y + size.y,
+			        ATTACK_THICKNESS,
+			        ATTACK_REACH};
+	}
+
+	return {};
 }
-// clang-format on
 
 void Player::update(float deltaTime,
                     const Controls &controls,
@@ -73,7 +89,6 @@ void Player::update(float deltaTime,
                     float leftBound,
                     float rightBound,
                     const std::vector<Platform> &platforms) {
-	update_attack(deltaTime, controls);
 
 	const float previousX = position.x;
 
@@ -101,8 +116,15 @@ void Player::update(float deltaTime,
 
 	update_crouch(controls, platforms);
 
+	// update combat after grounded state so directional attacks use
+	// the player's current state for this frame
+	const bool attackStarted = update_attack(deltaTime, controls);
+
 	// jumping
-	if (IsKeyPressed(controls.jump) && isGrounded && !isCrouching) {
+	// an upward attack takes priority over jumping when both inputs
+	// are pressed on the same frame
+	if (IsKeyPressed(controls.jump) && !attackStarted && isGrounded &&
+	    !isCrouching) {
 		velocity.y = -JUMP_SPEED;
 		isGrounded = false;
 	}
@@ -152,6 +174,7 @@ void Player::update_crouch(const Controls &controls,
 	if (isCrouching && can_stand(platforms))
 		stand_up();
 }
+
 void Player::crouch() {
 	if (isCrouching)
 		return;
@@ -203,6 +226,11 @@ void Player::apply_fast_fall(const Controls &controls) {
 	if (isGrounded || !IsKeyPressed(controls.down))
 		return;
 
+	// don't trigger fast-fall when the same input is being used
+	// for an active downward attack
+	if (isAttacking && attackDirection == AttackDirection::Down)
+		return;
+
 	velocity.y = std::max(velocity.y, FAST_FALL_SPEED);
 }
 
@@ -225,6 +253,7 @@ bool Player::is_on_surface(float groundY,
 void Player::handle_platform_landing(float previousBottom,
                                      float currentBottom,
                                      const std::vector<Platform> &platforms) {
+
 	for (const Platform &platform : platforms) {
 		bool isFalling = velocity.y > 0;
 		bool crossedPlatformTop =
@@ -242,6 +271,7 @@ void Player::handle_platform_landing(float previousBottom,
 
 void Player::handle_platform_horizontal_collision(
     float previousX, const std::vector<Platform> &platforms) {
+
 	const float previousPlayerLeft = previousX;
 	const float previousPlayerRight = previousX + size.x;
 
@@ -292,6 +322,7 @@ void Player::handle_platform_underside_collision(
     float previousTop,
     float currentTop,
     const std::vector<Platform> &platforms) {
+
 	for (const Platform &platform : platforms) {
 		bool isRising = velocity.y < 0;
 
@@ -318,15 +349,19 @@ bool Player::overlaps_vertically(const Platform &platform) const {
 }
 
 void Player::apply_platform_movement(const std::vector<Platform> &platforms) {
+
 	for (const Platform &platform : platforms) {
 		if (platform.movementDelta.x == 0.0f)
 			continue;
 
 		const float previousLeft = platform.left() - platform.movementDelta.x;
 		const float previousRight = platform.right() - platform.movementDelta.x;
+
 		const bool wasOnPlatform = position.y + size.y == platform.top();
+
 		const bool overlappedPreviously =
 		    position.x + size.x > previousLeft && position.x < previousRight;
+
 		if (wasOnPlatform && overlappedPreviously) {
 			position.x += platform.movementDelta.x;
 			break;
@@ -335,16 +370,43 @@ void Player::apply_platform_movement(const std::vector<Platform> &platforms) {
 }
 
 /* Combat Helpers */
-void Player::update_attack(float deltaTime, const Controls &controls) {
+bool Player::update_attack(float deltaTime, const Controls &controls) {
 	attackTimeRemaining = std::max(0.0f, attackTimeRemaining - deltaTime);
+
 	attackCooldownRemaining =
 	    std::max(0.0f, attackCooldownRemaining - deltaTime);
 
-	isAttacking = attackTimeRemaining > 0;
+	isAttacking = attackTimeRemaining > 0.0f;
 
-	if (IsKeyPressed(controls.attack1) && attackCooldownRemaining == 0.0f) {
-		attackTimeRemaining = ATTACK_DURATION;
-		attackCooldownRemaining = ATTACK_COOLDOWN;
-		isAttacking = true;
-	}
+	if (attackCooldownRemaining > 0.0f)
+		return false;
+
+	if (!IsKeyPressed(controls.attack1))
+		return false;
+
+	// attack direction is locked when the attack begins so changing
+	// movement input doesn't move the hitbox halfway through the attack
+	start_attack(get_attack_direction(controls));
+
+	return true;
+}
+
+AttackDirection Player::get_attack_direction(const Controls &controls) const {
+	// down attacks are only available while airborne
+	if (!isGrounded && IsKeyDown(controls.down))
+		return AttackDirection::Down;
+
+	// jump/up doubles as the upward attack modifier
+	if (IsKeyDown(controls.jump))
+		return AttackDirection::Up;
+
+	return facing == Facing::Right ? AttackDirection::Right
+	                               : AttackDirection::Left;
+}
+
+void Player::start_attack(AttackDirection direction) {
+	attackDirection = direction;
+	attackTimeRemaining = ATTACK_DURATION;
+	attackCooldownRemaining = ATTACK_COOLDOWN;
+	isAttacking = true;
 }

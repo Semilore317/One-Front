@@ -38,11 +38,11 @@ struct Player {
   private:
 	float standingHeight;
 
-	void update_crouch(const Controls &controls, const std::vector<Platform> &platforms);
+	void update_crouch(const Controls &controls,
+	                   const std::vector<Platform> &platforms);
 	void crouch();
 	void stand_up();
 	bool can_stand(const std::vector<Platform> &platforms) const;
-
 
 	// Platforming Helpers
 	void apply_gravity(float deltaTime);

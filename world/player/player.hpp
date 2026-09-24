@@ -17,6 +17,7 @@ struct Player {
 
 	Facing facing;
 	bool isGrounded;
+	bool isCrouching;
 
 	bool isAttacking;
 	float attackTimeRemaining;
@@ -25,6 +26,7 @@ struct Player {
 	float maxHealth;
 	float currentHealth;
 
+	[[nodiscard]]
 	Rectangle attack_hitbox() const;
 	void update(float deltaTime,
 	            const Controls &controls,
@@ -34,8 +36,17 @@ struct Player {
 	            const std::vector<Platform> &platforms);
 
   private:
+	float standingHeight;
+
+	void update_crouch(const Controls &controls, const std::vector<Platform> &platforms);
+	void crouch();
+	void stand_up();
+	bool can_stand(const std::vector<Platform> &platforms) const;
+
+
 	// Platforming Helpers
 	void apply_gravity(float deltaTime);
+	[[nodiscard]]
 	bool is_on_surface(float groundY,
 	                   const std::vector<Platform> &platforms) const;
 	void handle_platform_landing(float previousBottom,

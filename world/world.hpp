@@ -3,10 +3,18 @@
 #include <vector>
 
 struct World {
-	World(float rightBound, float groundY);
+	World(float leftBound,
+	      float rightBound,
+	      float topBound,
+	      float groundY,
+	      std::vector<Platform> platforms = {});
+
+	[[nodiscard]] static World vertical_prototype(float rightBound,
+	                                              float groundY);
 
 	float leftBound;
 	float rightBound;
+	float topBound;
 	float groundY;
 	std::vector<Platform> platforms;
 

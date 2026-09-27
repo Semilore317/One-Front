@@ -23,6 +23,7 @@ FetchContent_MakeAvailable(raylib)
 add_library(
     OneFrontCore
     game/game.cpp
+    game/camera/game_camera.cpp
     game/controls.cpp
     world/world.cpp
     world/player/player.cpp
@@ -41,7 +42,42 @@ target_link_libraries(
     raylib
 )
 
+target_include_directories(
+    OneFrontCore
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_link_libraries(OneFront
     PRIVATE
     OneFrontCore
 )
+
+include(CTest)
+
+if(BUILD_TESTING)
+    add_executable(
+        OneFrontCameraTests
+        tests/game_camera_tests.cpp
+    )
+
+    add_executable(
+        OneFrontWorldLayoutTests
+        tests/world_layout_tests.cpp
+    )
+
+    target_link_libraries(
+        OneFrontCameraTests
+        PRIVATE
+        OneFrontCore
+    )
+
+    target_link_libraries(
+        OneFrontWorldLayoutTests
+        PRIVATE
+        OneFrontCore
+    )
+
+    add_test(NAME game_camera COMMAND OneFrontCameraTests)
+    add_test(NAME world_layout COMMAND OneFrontWorldLayoutTests)
+endif()

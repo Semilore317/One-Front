@@ -9,11 +9,10 @@ constexpr float GROUND_OFFSET = 100.0f;
 
 Game::Game():
     world{
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT - GROUND_OFFSET,
-    },
+        World::vertical_prototype(WINDOW_WIDTH, WINDOW_HEIGHT - GROUND_OFFSET)},
     player{{PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},
-           {PLAYER_WIDTH, PLAYER_HEIGHT}},
+	       {PLAYER_WIDTH, PLAYER_HEIGHT}},
+    camera{WINDOW_WIDTH, WINDOW_HEIGHT, player, world},
     controls{WASD_Controls} {}
 
 void Game::update(float deltaTime) {
@@ -25,9 +24,18 @@ void Game::update(float deltaTime) {
 	              world.leftBound,
 	              world.rightBound,
 	              world.platforms);
+	camera.update(deltaTime, player, world);
 }
 
 void Game::draw() const {
+	BeginMode2D(camera.camera);
+	draw_world();
+	EndMode2D();
+
+	draw_hud();
+}
+
+void Game::draw_world() const {
 	// the ground
 	DrawLine(
 	    world.leftBound, world.groundY, world.rightBound, world.groundY, BROWN);
@@ -36,6 +44,16 @@ void Game::draw() const {
 	for (const Platform &platform : world.platforms)
 		DrawRectangleV(platform.position, platform.size, BROWN);
 
+	draw_player(player);
+
+	/* Temporary Visualization of attack hitbox */
+	// TODO: remove later on with proper attack animations
+	if (player.isAttacking) {
+		DrawRectangleRec(player.attack_hitbox(), Fade(RED, 0.45f));
+	}
+}
+
+void Game::draw_hud() const {
 	// health bar dimensions and size
 	float barX = 20.0f;
 	float barY = 20.0f;
@@ -47,12 +65,4 @@ void Game::draw() const {
 	// background and foreground for healthbar
 	DrawRectangle(barX, barY, maxBarWidth, barHeight, DARKGRAY);
 	DrawRectangle(barX, barY, maxBarWidth * healthRatio, barHeight, GREEN);
-
-	draw_player(player);
-
-	/* Temporary Visualization of attack hitbox */
-	// TODO: remove later on with proper attack animations
-	if (player.isAttacking) {
-		DrawRectangleRec(player.attack_hitbox(), Fade(RED, 0.45f));
-	}
 }

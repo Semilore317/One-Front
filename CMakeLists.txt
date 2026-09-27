@@ -25,7 +25,9 @@ add_library(
     game/game.cpp
     game/camera/game_camera.cpp
     game/controls.cpp
+    world/level/level_builder.cpp
     world/world.cpp
+    world/levels/vertical_prototype.cpp
     world/player/player.cpp
     world/platform/platform.cpp
     rendering/draw_player.cpp
@@ -67,6 +69,11 @@ if(BUILD_TESTING)
     )
 
     add_executable(
+        OneFrontLevelBuilderTests
+        tests/level_builder_tests.cpp
+    )
+
+    add_executable(
         OneFrontPlayerContactTests
         tests/player_contact_tests.cpp
     )
@@ -84,12 +91,19 @@ if(BUILD_TESTING)
     )
 
     target_link_libraries(
+        OneFrontLevelBuilderTests
+        PRIVATE
+        OneFrontCore
+    )
+
+    target_link_libraries(
         OneFrontPlayerContactTests
         PRIVATE
         OneFrontCore
     )
 
     add_test(NAME game_camera COMMAND OneFrontCameraTests)
+    add_test(NAME level_builder COMMAND OneFrontLevelBuilderTests)
     add_test(NAME world_layout COMMAND OneFrontWorldLayoutTests)
     add_test(NAME player_contact COMMAND OneFrontPlayerContactTests)
 endif()

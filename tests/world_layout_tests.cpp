@@ -1,3 +1,4 @@
+#include "world/levels/vertical_prototype.hpp"
 #include "world/world.hpp"
 
 #include <algorithm>
@@ -15,13 +16,21 @@ bool expect(bool condition, const char *description) {
 
 int main() {
 	constexpr float viewportHeight{720.0f};
-	World world = World::vertical_prototype(1280.0f, 620.0f);
+	const LevelDefinition level = levels::vertical_prototype(1280.0f, 620.0f);
+	World world{level};
 
 	bool passed = true;
 	passed &= expect(world.groundY - world.topBound >= viewportHeight * 2.5f,
 	                 "prototype should span multiple screen heights");
-	passed &= expect(world.platforms.size() >= 30,
-	                 "prototype should contain a complete climbing route");
+	passed &= expect(world.platforms.size() == 36,
+	                 "prototype should preserve every authored platform");
+	passed &= expect(level.playerSpawn.x >= level.leftBound &&
+	                     level.playerSpawn.x < level.rightBound &&
+	                     level.playerSpawn.y >= level.topBound &&
+	                     level.playerSpawn.y < level.groundY,
+	                 "player spawn should be inside the playable bounds");
+	passed &= expect(level.playerSpawn.y == level.groundY - 50.0f,
+	                 "player spawn should start on the ground");
 
 	const auto outsideBounds = std::ranges::find_if(
 	    world.platforms, [&world](const Platform &platform) {
@@ -45,16 +54,16 @@ int main() {
 	    std::ranges::count_if(world.platforms, [](const Platform &platform) {
 		    return platform.isMoving;
 	    });
-	passed &= expect(movingCount >= 8,
-	                 "prototype should exercise moving-platform gameplay");
+	passed &= expect(movingCount == 10,
+	                 "prototype should preserve every moving platform");
 
 	const auto pusherCount =
 	    std::ranges::count_if(world.platforms, [](const Platform &platform) {
 		    return platform.isMoving && platform.size.x <= 30.0f &&
 		           platform.size.y >= 60.0f;
 	    });
-	passed &= expect(pusherCount >= 2,
-	                 "prototype should include narrow moving pushers");
+	passed &= expect(pusherCount == 2,
+	                 "prototype should preserve both moving pushers");
 
 	const bool hasCrouchClearance =
 	    std::ranges::any_of(world.platforms, [&world](const Platform &floor) {
@@ -70,6 +79,31 @@ int main() {
 	    });
 	passed &= expect(hasCrouchClearance,
 	                 "prototype should include a crouch-height passage");
+
+	const auto finalJumpLaunch = std::ranges::find_if(
+	    world.platforms, [&world](const Platform &platform) {
+		    return platform.top() == world.groundY - 1305.0f;
+	    });
+	const auto finalJumpTarget = std::ranges::find_if(
+	    world.platforms, [&world](const Platform &platform) {
+		    return platform.isMoving &&
+		           platform.top() == world.groundY - 1360.0f;
+	    });
+	passed &= expect(finalJumpLaunch != world.platforms.end() &&
+	                     finalJumpTarget != world.platforms.end(),
+	                 "final timed jump should be present");
+	if (finalJumpLaunch != world.platforms.end() &&
+	    finalJumpTarget != world.platforms.end()) {
+		const float minimumGap =
+		    finalJumpTarget->startX - finalJumpLaunch->right();
+		const float maximumGap =
+		    finalJumpTarget->endX - finalJumpLaunch->right();
+		passed &= expect(minimumGap >= 0.0f && maximumGap <= 50.0f,
+		                 "final timed jump should avoid a clearance trap");
+		passed &= expect(finalJumpTarget->size.x >= 180.0f &&
+		                     finalJumpTarget->speed <= 80.0f,
+		                 "final timed jump should have a forgiving landing");
+	}
 
 	const auto lowestPlatform = std::ranges::max_element(
 	    world.platforms, {}, [](const Platform &platform) {

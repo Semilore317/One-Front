@@ -63,6 +63,41 @@ cmake --build build --config Release --target OneFront
 
 Run the generated `OneFront` executable from the build directory.
 
+## Level authoring
+
+Levels are C++ functions that return a `LevelDefinition`. Use `LevelBuilder` to
+describe bounds, the player spawn, static platforms, moving platforms, and
+moving walls without changing world simulation code:
+
+```cpp
+#include "world/level/level_builder.hpp"
+
+#include <utility>
+
+LevelDefinition example_level(float rightBound, float groundY) {
+    levels::LevelBuilder level{levels::LevelBounds{
+        .left = 0.0f,
+        .right = rightBound,
+        .groundY = groundY,
+        .heightAboveGround = 1200.0f}};
+    level.spawn_on_ground(50.0f, 50.0f);
+    level.platform(80.0f, levels::above_ground(40.0f));
+    level.moving_platform(
+        300.0f,
+        levels::above_ground(100.0f),
+        {.startX = 250.0f, .endX = 500.0f, .speed = 120.0f});
+
+    return std::move(level).build();
+}
+```
+
+`above_ground()` measures the platform's top edge upward from the level's
+ground line, so layouts remain readable when the window or ground position
+changes. The builder rejects missing spawns, invalid dimensions or movement
+ranges, and platforms that leave the declared level bounds. Use `spawn()` with
+an `above_ground()` elevation when a level should start the player somewhere
+other than the ground.
+
 ## Status
 
 One Front is actively developed and remains a gameplay prototype. The current

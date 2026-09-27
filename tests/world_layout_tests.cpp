@@ -22,8 +22,8 @@ int main() {
 	bool passed = true;
 	passed &= expect(world.groundY - world.topBound >= viewportHeight * 2.5f,
 	                 "prototype should span multiple screen heights");
-	passed &= expect(world.platforms.size() >= 30,
-	                 "prototype should contain a complete climbing route");
+	passed &= expect(world.platforms.size() == 36,
+	                 "prototype should preserve every authored platform");
 	passed &= expect(level.playerSpawn.x >= level.leftBound &&
 	                     level.playerSpawn.x < level.rightBound &&
 	                     level.playerSpawn.y >= level.topBound &&
@@ -54,16 +54,16 @@ int main() {
 	    std::ranges::count_if(world.platforms, [](const Platform &platform) {
 		    return platform.isMoving;
 	    });
-	passed &= expect(movingCount >= 8,
-	                 "prototype should exercise moving-platform gameplay");
+	passed &= expect(movingCount == 10,
+	                 "prototype should preserve every moving platform");
 
 	const auto pusherCount =
 	    std::ranges::count_if(world.platforms, [](const Platform &platform) {
 		    return platform.isMoving && platform.size.x <= 30.0f &&
 		           platform.size.y >= 60.0f;
 	    });
-	passed &= expect(pusherCount >= 2,
-	                 "prototype should include narrow moving pushers");
+	passed &= expect(pusherCount == 2,
+	                 "prototype should preserve both moving pushers");
 
 	const bool hasCrouchClearance =
 	    std::ranges::any_of(world.platforms, [&world](const Platform &floor) {

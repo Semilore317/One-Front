@@ -57,7 +57,10 @@ jobs:
         run: cmake -S . -B build -A x64
 
       - name: Build
-        run: cmake --build build --config Release --target OneFront
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
 
   build-linux:
     name: Build Linux
@@ -90,5 +93,7 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --target OneFront
-        
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

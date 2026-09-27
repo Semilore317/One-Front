@@ -17,6 +17,7 @@ combat, and a multi-screen vertical route.
 - Smooth bounded camera following
 - Multi-screen vertical prototype level with movers, pushers, and timing
   sections
+- Reachable summit goal with persistent completion feedback
 
 ## Controls
 
@@ -66,8 +67,8 @@ Run the generated `OneFront` executable from the build directory.
 ## Level authoring
 
 Levels are C++ functions that return a `LevelDefinition`. Use `LevelBuilder` to
-describe bounds, the player spawn, static platforms, moving platforms, and
-moving walls without changing world simulation code:
+describe bounds, the player spawn, summit goal, static platforms, moving
+platforms, and moving walls without changing world simulation code:
 
 ```cpp
 #include "world/level/level_builder.hpp"
@@ -82,6 +83,7 @@ LevelDefinition example_level(float rightBound, float groundY) {
         .heightAboveGround = 1200.0f}};
     level.spawn_on_ground(50.0f, 50.0f);
     level.platform(80.0f, levels::above_ground(40.0f));
+    level.goal(140.0f, levels::above_ground(40.0f));
     level.moving_platform(
         300.0f,
         levels::above_ground(100.0f),
@@ -91,12 +93,12 @@ LevelDefinition example_level(float rightBound, float groundY) {
 }
 ```
 
-`above_ground()` measures the platform's top edge upward from the level's
-ground line, so layouts remain readable when the window or ground position
-changes. The builder rejects missing spawns, invalid dimensions or movement
-ranges, and platforms that leave the declared level bounds. Use `spawn()` with
-an `above_ground()` elevation when a level should start the player somewhere
-other than the ground.
+`above_ground()` measures a platform's top edge or a goal's supporting surface
+upward from the level's ground line, so layouts remain readable when the window
+or ground position changes. The builder rejects missing spawns or goals,
+invalid dimensions or movement ranges, and authored geometry that leaves the
+declared level bounds. Use `spawn()` with an `above_ground()` elevation when a
+level should start the player somewhere other than the ground.
 
 ## Status
 

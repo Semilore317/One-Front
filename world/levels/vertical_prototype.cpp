@@ -93,6 +93,7 @@ LevelDefinition levels::vertical_prototype(float rightBound, float groundY) {
 	level.platform(610.0f, above_ground(1690.0f), PRECISION_LEDGE_WIDTH);
 	level.platform(830.0f, above_ground(1745.0f), PRECISION_LEDGE_WIDTH);
 	level.platform(1030.0f, above_ground(1800.0f), 170.0f);
+	level.goal(1095.0f, above_ground(1800.0f));
 
 	return std::move(level).build();
 }

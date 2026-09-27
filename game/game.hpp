@@ -15,6 +15,7 @@ struct Game {
 	Player player;
 	GameCamera camera;
 	Controls controls;
+	bool levelComplete;
 
 	void update(float deltaTime);
 	void draw() const;

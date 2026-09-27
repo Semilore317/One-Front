@@ -31,6 +31,16 @@ int main() {
 	                 "player spawn should be inside the playable bounds");
 	passed &= expect(level.playerSpawn.y == level.groundY - 50.0f,
 	                 "player spawn should start on the ground");
+	passed &= expect(level.goal.x >= level.leftBound &&
+	                     level.goal.x + level.goal.width <= level.rightBound &&
+	                     level.goal.y >= level.topBound &&
+	                     level.goal.y + level.goal.height <= level.groundY,
+	                 "summit goal should remain inside the playable bounds");
+	passed &=
+	    expect(world.goal.x == level.goal.x && world.goal.y == level.goal.y &&
+	               world.goal.width == level.goal.width &&
+	               world.goal.height == level.goal.height,
+	           "world should preserve the authored summit goal");
 
 	const auto outsideBounds = std::ranges::find_if(
 	    world.platforms, [&world](const Platform &platform) {
@@ -118,6 +128,15 @@ int main() {
 	                     lowestPlatform->top() - highestPlatform->top() >=
 	                         viewportHeight * 2.0f,
 	                 "platform route should cover multiple screens");
+	if (highestPlatform != world.platforms.end()) {
+		passed &=
+		    expect(level.goal.y + level.goal.height == highestPlatform->top(),
+		           "summit goal should rest on the final platform");
+		passed &= expect(
+		    level.goal.x >= highestPlatform->left() &&
+		        level.goal.x + level.goal.width <= highestPlatform->right(),
+		    "summit goal should be reachable from the final platform");
+	}
 
 	return passed ? 0 : 1;
 }

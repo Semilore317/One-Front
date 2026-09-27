@@ -10,5 +10,6 @@ struct LevelDefinition {
 	float topBound;
 	float groundY;
 	Vector2 playerSpawn;
+	Rectangle goal;
 	std::vector<Platform> platforms;
 };

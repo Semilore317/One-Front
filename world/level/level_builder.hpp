@@ -31,6 +31,10 @@ class LevelBuilder {
 
 	LevelBuilder &spawn(float x, Elevation feetElevation, float playerHeight) &;
 	LevelBuilder &spawn_on_ground(float x, float playerHeight) &;
+	LevelBuilder &goal(float x,
+	                   Elevation surfaceElevation,
+	                   float width = 40.0f,
+	                   float height = 60.0f) &;
 	LevelBuilder &platform(float x,
 	                       Elevation elevation,
 	                       float width = 180.0f,
@@ -51,6 +55,7 @@ class LevelBuilder {
   private:
 	LevelDefinition level_;
 	bool hasSpawn_{false};
+	bool hasGoal_{false};
 	bool hasBuilt_{false};
 
 	[[nodiscard]] float world_y(Elevation elevation) const;

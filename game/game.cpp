@@ -1,6 +1,8 @@
 #include "./game.hpp"
+#include "../rendering/draw_goal.hpp"
 #include "../rendering/draw_player.hpp"
 #include "../world/levels/vertical_prototype.hpp"
+#include "./goal.hpp"
 #include "raylib.h"
 #include <algorithm>
 
@@ -16,7 +18,8 @@ Game::Game(const LevelDefinition &level):
     world{level},
     player{level.playerSpawn, {PLAYER_WIDTH, PLAYER_HEIGHT}},
     camera{WINDOW_WIDTH, WINDOW_HEIGHT, player, world},
-    controls{WASD_Controls} {}
+    controls{WASD_Controls},
+    levelComplete{false} {}
 
 void Game::update(float deltaTime) {
 	// update things belonging to the game
@@ -27,6 +30,10 @@ void Game::update(float deltaTime) {
 	              world.leftBound,
 	              world.rightBound,
 	              world.platforms);
+	levelComplete = update_goal_completion(
+	    levelComplete,
+	    {player.position.x, player.position.y, player.size.x, player.size.y},
+	    world.goal);
 	camera.update(deltaTime, player, world);
 }
 
@@ -46,6 +53,8 @@ void Game::draw_world() const {
 	// draw the platforms
 	for (const Platform &platform : world.platforms)
 		DrawRectangleV(platform.position, platform.size, BROWN);
+
+	draw_goal(world.goal);
 
 	draw_player(player);
 
@@ -69,4 +78,11 @@ void Game::draw_hud() const {
 	// background and foreground for healthbar
 	DrawRectangle(barX, barY, maxBarWidth, barHeight, DARKGRAY);
 	DrawRectangle(barX, barY, maxBarWidth * healthRatio, barHeight, GREEN);
+
+	if (levelComplete) {
+		constexpr const char *message{"SUMMIT REACHED"};
+		constexpr int fontSize{40};
+		const int textWidth = MeasureText(message, fontSize);
+		DrawText(message, (WINDOW_WIDTH - textWidth) / 2, 40, fontSize, GOLD);
+	}
 }

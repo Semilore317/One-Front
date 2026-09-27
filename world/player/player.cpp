@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 // Player stats
@@ -11,6 +12,7 @@ constexpr float DEFAULT_MOVE_SPEED{400.0f};
 constexpr float GRAVITY{600.0f};
 constexpr float JUMP_SPEED{300.0f};
 constexpr float FAST_FALL_SPEED{700.0f};
+constexpr float SURFACE_CONTACT_EPSILON{0.1f};
 
 // Combat
 constexpr float ATTACK_DURATION{0.2f};
@@ -247,12 +249,11 @@ void Player::apply_fast_fall(const Controls &controls) {
 bool Player::is_on_surface(float groundY,
                            const std::vector<Platform> &platforms) const {
 	// check whether we're still standing on a surface
-	bool supported = position.y + size.y >= groundY;
+	bool supported = position.y + size.y >= groundY - SURFACE_CONTACT_EPSILON;
 
 	for (const Platform &platform : platforms) {
-		bool onPlatformTop = position.y + size.y == platform.top();
-
-		if (onPlatformTop && overlaps_horizontally(platform)) {
+		if (is_at_surface_height(platform.top()) &&
+		    overlaps_horizontally(platform)) {
 			supported = true;
 			break;
 		}
@@ -358,6 +359,11 @@ bool Player::overlaps_vertically(const Platform &platform) const {
 	       position.y < platform.bottom();
 }
 
+bool Player::is_at_surface_height(float surfaceY) const {
+	const float playerBottom = position.y + size.y;
+	return std::abs(playerBottom - surfaceY) <= SURFACE_CONTACT_EPSILON;
+}
+
 void Player::apply_platform_movement(const std::vector<Platform> &platforms) {
 
 	for (const Platform &platform : platforms) {
@@ -367,7 +373,7 @@ void Player::apply_platform_movement(const std::vector<Platform> &platforms) {
 		const float previousLeft = platform.left() - platform.movementDelta.x;
 		const float previousRight = platform.right() - platform.movementDelta.x;
 
-		const bool wasOnPlatform = position.y + size.y == platform.top();
+		const bool wasOnPlatform = is_at_surface_height(platform.top());
 
 		const bool overlappedPreviously =
 		    position.x + size.x > previousLeft && position.x < previousRight;

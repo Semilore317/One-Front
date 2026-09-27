@@ -16,9 +16,9 @@ constexpr float TIMED_JUMP_WIDTH{180.0f};
 LevelDefinition levels::vertical_prototype(float rightBound, float groundY) {
 	LevelBuilder level{
 	    LevelBounds{.left = 0.0f,
-		            .right = rightBound,
-		            .groundY = groundY,
-		            .heightAboveGround = PROTOTYPE_WORLD_HEIGHT}};
+	                .right = rightBound,
+	                .groundY = groundY,
+	                .heightAboveGround = PROTOTYPE_WORLD_HEIGHT}};
 	level.spawn_on_ground(PLAYER_SPAWN_X, PLAYER_HEIGHT);
 
 	// Opening climb: wide, forgiving jumps introduce the route.

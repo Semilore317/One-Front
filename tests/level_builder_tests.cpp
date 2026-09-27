@@ -34,9 +34,9 @@ bool expect_invalid(Function function, const char *description) {
 levels::LevelBuilder test_level() {
 	return levels::LevelBuilder{
 	    levels::LevelBounds{.left = 0.0f,
-		                    .right = 1280.0f,
-		                    .groundY = 620.0f,
-		                    .heightAboveGround = 2000.0f}};
+	                        .right = 1280.0f,
+	                        .groundY = 620.0f,
+	                        .heightAboveGround = 2000.0f}};
 }
 } // namespace
 
@@ -48,19 +48,19 @@ int main() {
 	builder.spawn_on_ground(50.0f, 50.0f)
 	    .platform(80.0f, above_ground(40.0f))
 	    .moving_platform(300.0f,
-		                 above_ground(100.0f),
-		                 {.startX = 250.0f, .endX = 500.0f, .speed = 120.0f},
-		                 160.0f)
+	                     above_ground(100.0f),
+	                     {.startX = 250.0f, .endX = 500.0f, .speed = 120.0f},
+	                     160.0f)
 	    .moving_wall(700.0f,
-		             above_ground(200.0f),
-		             {.startX = 650.0f, .endX = 800.0f, .speed = 100.0f});
+	                 above_ground(200.0f),
+	                 {.startX = 650.0f, .endX = 800.0f, .speed = 100.0f});
 	const LevelDefinition level = std::move(builder).build();
 
 	passed &= expect(nearly_equal(level.topBound, -1380.0f),
 	                 "builder should derive the top bound from world height");
 	passed &=
 	    expect(level.playerSpawn.x == 50.0f && level.playerSpawn.y == 570.0f,
-		       "builder should place the player on the ground");
+	           "builder should place the player on the ground");
 	passed &= expect(level.platforms.size() == 3,
 	                 "builder should preserve authored platform order");
 	passed &= expect(level.platforms[0].top() == 580.0f,
@@ -150,9 +150,9 @@ int main() {
 	    [] {
 		    [[maybe_unused]] const auto reversedBounds = levels::LevelBuilder{
 		        levels::LevelBounds{.left = 1280.0f,
-				                    .right = 0.0f,
-				                    .groundY = 620.0f,
-				                    .heightAboveGround = 2000.0f}};
+		                            .right = 0.0f,
+		                            .groundY = 620.0f,
+		                            .heightAboveGround = 2000.0f}};
 	    },
 	    "builder should reject reversed horizontal bounds");
 	passed &= expect_invalid(
@@ -275,8 +275,8 @@ int main() {
 		        300.0f,
 		        above_ground(100.0f),
 		        {.startX = 250.0f,
-				 .endX = 500.0f,
-				 .speed = std::numeric_limits<float>::infinity()});
+		         .endX = 500.0f,
+		         .speed = std::numeric_limits<float>::infinity()});
 	    },
 	    "builder should reject non-finite movement speeds");
 

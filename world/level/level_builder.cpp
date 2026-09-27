@@ -13,11 +13,11 @@ void require(bool condition, const char *message) {
 
 levels::LevelBuilder::LevelBuilder(LevelBounds bounds):
     level_{bounds.left,
-	       bounds.right,
-	       bounds.groundY - bounds.heightAboveGround,
-	       bounds.groundY,
-	       {},
-	       {}} {
+           bounds.right,
+           bounds.groundY - bounds.heightAboveGround,
+           bounds.groundY,
+           {},
+           {}} {
 	require(std::isfinite(bounds.left) && std::isfinite(bounds.right) &&
 	            std::isfinite(bounds.groundY) &&
 	            std::isfinite(bounds.heightAboveGround),

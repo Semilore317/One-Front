@@ -27,16 +27,16 @@ int main() {
 	    world.platforms, [&world](const Platform &platform) {
 		    const float leftExtent =
 		        platform.isMoving ? std::min(platform.startX, platform.endX)
-				                  : platform.left();
+		                          : platform.left();
 		    const float rightExtent =
 		        platform.isMoving
-			        ? std::max(platform.startX, platform.endX) + platform.size.x
-			        : platform.right();
+		            ? std::max(platform.startX, platform.endX) + platform.size.x
+		            : platform.right();
 
 		    return leftExtent < world.leftBound ||
-			       rightExtent > world.rightBound ||
-			       platform.top() < world.topBound ||
-			       platform.bottom() > world.groundY;
+		           rightExtent > world.rightBound ||
+		           platform.top() < world.topBound ||
+		           platform.bottom() > world.groundY;
 	    });
 	passed &= expect(outsideBounds == world.platforms.end(),
 	                 "all platforms should remain inside the world bounds");
@@ -51,7 +51,7 @@ int main() {
 	const auto pusherCount =
 	    std::ranges::count_if(world.platforms, [](const Platform &platform) {
 		    return platform.isMoving && platform.size.x <= 30.0f &&
-			       platform.size.y >= 60.0f;
+		           platform.size.y >= 60.0f;
 	    });
 	passed &= expect(pusherCount >= 2,
 	                 "prototype should include narrow moving pushers");
@@ -65,7 +65,7 @@ int main() {
 			            floor.left() < ceiling.right() &&
 			            floor.right() > ceiling.left();
 			        return overlapsHorizontally && clearance >= 30.0f &&
-					       clearance < 50.0f;
+			               clearance < 50.0f;
 		        });
 	    });
 	passed &= expect(hasCrouchClearance,

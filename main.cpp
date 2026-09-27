@@ -3,6 +3,7 @@
 
 int main() {
 	InitWindow(1280, 720, "One Front");
+	SetTargetFPS(60);
 
 	Game game;
 

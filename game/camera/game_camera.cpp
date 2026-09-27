@@ -57,9 +57,9 @@ Vector2 GameCamera::bounded_target(const Player &player,
 
 	return {
 	    bounded_axis_target(playerCenter.x,
-		                    world.leftBound,
-		                    world.rightBound,
-		                    halfViewportWidth),
+	                        world.leftBound,
+	                        world.rightBound,
+	                        halfViewportWidth),
 	    bounded_axis_target(
 	        playerCenter.y, world.topBound, world.groundY, halfViewportHeight),
 	};

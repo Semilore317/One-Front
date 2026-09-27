@@ -1,6 +1,7 @@
 #include "./game.hpp"
 #include "../rendering/draw_player.hpp"
 #include "raylib.h"
+#include <algorithm>
 
 constexpr float PLAYER_HEIGHT = 50.0f;
 constexpr float PLAYER_WIDTH = 30.0f;
@@ -11,7 +12,7 @@ Game::Game():
     world{
         World::vertical_prototype(WINDOW_WIDTH, WINDOW_HEIGHT - GROUND_OFFSET)},
     player{{PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},
-	       {PLAYER_WIDTH, PLAYER_HEIGHT}},
+           {PLAYER_WIDTH, PLAYER_HEIGHT}},
     camera{WINDOW_WIDTH, WINDOW_HEIGHT, player, world},
     controls{WASD_Controls} {}
 
@@ -55,12 +56,13 @@ void Game::draw_world() const {
 
 void Game::draw_hud() const {
 	// health bar dimensions and size
-	float barX = 20.0f;
-	float barY = 20.0f;
-	float maxBarWidth = 200.0f;
-	float barHeight = 20.0f;
+	constexpr float barX = 20.0f;
+	constexpr float barY = 20.0f;
+	constexpr float maxBarWidth = 200.0f;
+	constexpr float barHeight = 20.0f;
 
-	float healthRatio = player.currentHealth / player.maxHealth;
+	const float healthRatio =
+	    std::clamp(player.currentHealth / player.maxHealth, 0.0f, 1.0f);
 
 	// background and foreground for healthbar
 	DrawRectangle(barX, barY, maxBarWidth, barHeight, DARKGRAY);

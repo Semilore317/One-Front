@@ -8,6 +8,7 @@ constexpr float PLAYER_HEIGHT{50.0f};
 constexpr float PLAYER_SPAWN_X{50.0f};
 constexpr float TIMING_PLATFORM_WIDTH{160.0f};
 constexpr float PRECISION_LEDGE_WIDTH{150.0f};
+constexpr float RECOVERY_LEDGE_WIDTH{170.0f};
 
 Platform ledge(float x, float y, float width = PLATFORM_WIDTH) {
 	return {{x, y}, {width, PLATFORM_HEIGHT}};
@@ -100,13 +101,13 @@ LevelDefinition levels::vertical_prototype(float rightBound, float groundY) {
 	                         PRECISION_LEDGE_WIDTH),
 	        ledge(570.0f, y(1250.0f), PRECISION_LEDGE_WIDTH),
 	        ledge(780.0f, y(1305.0f), PRECISION_LEDGE_WIDTH),
-	        horizontal_mover(950.0f,
+	        horizontal_mover(900.0f,
 	                         y(1360.0f),
-	                         900.0f,
-	                         1080.0f,
-	                         140.0f,
-	                         PRECISION_LEDGE_WIDTH),
-	        ledge(760.0f, y(1415.0f), PRECISION_LEDGE_WIDTH),
+	                         860.0f,
+	                         1010.0f,
+	                         120.0f,
+	                         RECOVERY_LEDGE_WIDTH),
+	        ledge(760.0f, y(1415.0f), RECOVERY_LEDGE_WIDTH),
 	        ledge(540.0f, y(1470.0f), PRECISION_LEDGE_WIDTH),
 	        ledge(320.0f, y(1525.0f), PRECISION_LEDGE_WIDTH),
 	        horizontal_mover(80.0f,

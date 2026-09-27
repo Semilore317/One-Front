@@ -80,6 +80,31 @@ int main() {
 	passed &= expect(hasCrouchClearance,
 	                 "prototype should include a crouch-height passage");
 
+	const auto finalJumpLaunch = std::ranges::find_if(
+	    world.platforms, [&world](const Platform &platform) {
+		    return platform.top() == world.groundY - 1305.0f;
+	    });
+	const auto finalJumpTarget = std::ranges::find_if(
+	    world.platforms, [&world](const Platform &platform) {
+		    return platform.isMoving &&
+		           platform.top() == world.groundY - 1360.0f;
+	    });
+	passed &= expect(finalJumpLaunch != world.platforms.end() &&
+	                     finalJumpTarget != world.platforms.end(),
+	                 "final timed jump should be present");
+	if (finalJumpLaunch != world.platforms.end() &&
+	    finalJumpTarget != world.platforms.end()) {
+		const float minimumGap =
+		    finalJumpTarget->startX - finalJumpLaunch->right();
+		const float maximumGap =
+		    finalJumpTarget->endX - finalJumpLaunch->right();
+		passed &= expect(minimumGap >= 0.0f && maximumGap <= 50.0f,
+		                 "final timed jump should avoid a clearance trap");
+		passed &= expect(finalJumpTarget->size.x >= 180.0f &&
+		                     finalJumpTarget->speed <= 80.0f,
+		                 "final timed jump should have a forgiving landing");
+	}
+
 	const auto lowestPlatform = std::ranges::max_element(
 	    world.platforms, {}, [](const Platform &platform) {
 		    return platform.top();

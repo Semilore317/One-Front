@@ -17,6 +17,7 @@ combat, and a multi-screen vertical route.
 - Smooth bounded camera following
 - Multi-screen vertical prototype level with movers, pushers, and timing
   sections
+- Draw-only idle animation and an animated wooden training dummy
 
 ## Controls
 

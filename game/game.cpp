@@ -1,18 +1,20 @@
 #include "./game.hpp"
 #include "../rendering/draw_player.hpp"
+#include "../world/levels/vertical_prototype.hpp"
 #include "raylib.h"
 #include <algorithm>
 
 constexpr float PLAYER_HEIGHT = 50.0f;
 constexpr float PLAYER_WIDTH = 30.0f;
-constexpr float PLAYER_SPAWN_X = 50.0f;
 constexpr float GROUND_OFFSET = 100.0f;
 
 Game::Game():
-    world{
-        World::vertical_prototype(WINDOW_WIDTH, WINDOW_HEIGHT - GROUND_OFFSET)},
-    player{{PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},
-           {PLAYER_WIDTH, PLAYER_HEIGHT}},
+    Game{levels::vertical_prototype(WINDOW_WIDTH,
+                                    WINDOW_HEIGHT - GROUND_OFFSET)} {}
+
+Game::Game(const LevelDefinition &level):
+    world{level},
+    player{level.playerSpawn, {PLAYER_WIDTH, PLAYER_HEIGHT}},
     camera{WINDOW_WIDTH, WINDOW_HEIGHT, player, world},
     controls{WASD_Controls} {}
 

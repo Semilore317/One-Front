@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./../world/level/level_definition.hpp"
 #include "./../world/player/player.hpp"
 #include "./../world/world.hpp"
 #include "./camera/game_camera.hpp"
@@ -19,6 +20,7 @@ struct Game {
 	void draw() const;
 
   private:
+	explicit Game(const LevelDefinition &level);
 	void draw_world() const;
 	void draw_hud() const;
 };

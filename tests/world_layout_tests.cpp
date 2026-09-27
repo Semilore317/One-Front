@@ -1,3 +1,4 @@
+#include "world/levels/vertical_prototype.hpp"
 #include "world/world.hpp"
 
 #include <algorithm>
@@ -15,13 +16,21 @@ bool expect(bool condition, const char *description) {
 
 int main() {
 	constexpr float viewportHeight{720.0f};
-	World world = World::vertical_prototype(1280.0f, 620.0f);
+	const LevelDefinition level = levels::vertical_prototype(1280.0f, 620.0f);
+	World world{level};
 
 	bool passed = true;
 	passed &= expect(world.groundY - world.topBound >= viewportHeight * 2.5f,
 	                 "prototype should span multiple screen heights");
 	passed &= expect(world.platforms.size() >= 30,
 	                 "prototype should contain a complete climbing route");
+	passed &= expect(level.playerSpawn.x >= level.leftBound &&
+	                     level.playerSpawn.x < level.rightBound &&
+	                     level.playerSpawn.y >= level.topBound &&
+	                     level.playerSpawn.y < level.groundY,
+	                 "player spawn should be inside the playable bounds");
+	passed &= expect(level.playerSpawn.y == level.groundY - 50.0f,
+	                 "player spawn should start on the ground");
 
 	const auto outsideBounds = std::ranges::find_if(
 	    world.platforms, [&world](const Platform &platform) {

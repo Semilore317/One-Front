@@ -32,7 +32,7 @@ void draw_player(const Player &player) {
 	DrawLineV(shoulders, leftHand, WHITE);
 	DrawLineV(shoulders, rightHand, WHITE);
 
-	// show the directiotn the player is facing.
+	// Show the direction the player is facing.
 	const float direction = player.facing == Facing::Right ? 1.0f : -1.0f;
 
 	const Vector2 eye{head.x + direction * headRadius * 0.4f, head.y};

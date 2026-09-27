@@ -14,7 +14,7 @@ Game::Game():
     player{{PLAYER_SPAWN_X, world.groundY - PLAYER_HEIGHT},
            {PLAYER_WIDTH, PLAYER_HEIGHT}},
     camera{WINDOW_WIDTH, WINDOW_HEIGHT, player, world},
-    controls{WASD_Controls} {}
+    controls{Keyboard_Controls} {}
 
 void Game::update(float deltaTime) {
 	// update things belonging to the game

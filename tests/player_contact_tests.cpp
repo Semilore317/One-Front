@@ -31,7 +31,7 @@ int main() {
 	Player player{{120.0f, 150.05f}, {30.0f, 50.0f}};
 
 	player.update(
-	    0.0f, WASD_Controls, groundY, leftBound, rightBound, platforms);
+	    0.0f, Keyboard_Controls, groundY, leftBound, rightBound, platforms);
 
 	bool passed = true;
 	passed &= expect(player.isGrounded,
@@ -40,14 +40,14 @@ int main() {
 	platforms.front().position.x += 5.0f;
 	platforms.front().movementDelta.x = 5.0f;
 	player.update(
-	    0.0f, WASD_Controls, groundY, leftBound, rightBound, platforms);
+	    0.0f, Keyboard_Controls, groundY, leftBound, rightBound, platforms);
 	passed &= expect_near(player.position.x,
 	                      125.0f,
 	                      "contact drift should not break platform carrying");
 
 	Player unsupported{{120.0f, 150.2f}, {30.0f, 50.0f}};
 	unsupported.update(
-	    0.0f, WASD_Controls, groundY, leftBound, rightBound, platforms);
+	    0.0f, Keyboard_Controls, groundY, leftBound, rightBound, platforms);
 	passed &= expect(!unsupported.isGrounded,
 	                 "contact outside tolerance should not count as support");
 

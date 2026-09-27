@@ -1,15 +1,22 @@
 #pragma once
 
-struct Controls {
-	int left;
-	int right;
-	int jump;
-	int down;
+struct KeyBinding {
+	int primary;
+	int alternate;
 
-	int attack1;
-	int attack2;
-	int attack3;
+	[[nodiscard]] bool is_down() const;
+	[[nodiscard]] bool is_pressed() const;
 };
 
-extern const Controls WASD_Controls;
-extern const Controls Arrow_Controls;
+struct Controls {
+	KeyBinding left;
+	KeyBinding right;
+	KeyBinding jump;
+	KeyBinding down;
+
+	KeyBinding attack1;
+	KeyBinding attack2;
+	KeyBinding attack3;
+};
+
+extern const Controls Keyboard_Controls;

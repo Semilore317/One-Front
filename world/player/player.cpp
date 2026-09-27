@@ -102,10 +102,10 @@ void Player::update(float deltaTime,
 	apply_platform_movement(platforms);
 
 	// horizontal movement
-	if (IsKeyDown(controls.left)) {
+	if (controls.left.is_down()) {
 		velocity.x = -DEFAULT_MOVE_SPEED;
 		facing = Facing::Left;
-	} else if (IsKeyDown(controls.right)) {
+	} else if (controls.right.is_down()) {
 		velocity.x = DEFAULT_MOVE_SPEED;
 		facing = Facing::Right;
 	} else {
@@ -130,7 +130,7 @@ void Player::update(float deltaTime,
 	// jumping
 	// an upward attack takes priority over jumping when both inputs
 	// are pressed on the same frame
-	if (IsKeyPressed(controls.jump) && !attackStarted && isGrounded &&
+	if (controls.jump.is_pressed() && !attackStarted && isGrounded &&
 	    !isCrouching) {
 		velocity.y = -JUMP_SPEED;
 		isGrounded = false;
@@ -178,7 +178,7 @@ void Player::update_crouch(const Controls &controls,
 		return;
 	}
 
-	if (IsKeyDown(controls.down)) {
+	if (controls.down.is_down()) {
 		crouch();
 		return;
 	}
@@ -235,7 +235,7 @@ void Player::apply_gravity(float deltaTime) {
 }
 
 void Player::apply_fast_fall(const Controls &controls) {
-	if (isGrounded || !IsKeyPressed(controls.down))
+	if (isGrounded || !controls.down.is_pressed())
 		return;
 
 	// don't trigger fast-fall when the same input is being used
@@ -397,7 +397,7 @@ bool Player::update_attack(float deltaTime, const Controls &controls) {
 	if (attackCooldownRemaining > 0.0f)
 		return false;
 
-	if (!IsKeyPressed(controls.attack1))
+	if (!controls.attack1.is_pressed())
 		return false;
 
 	// attack direction is locked when the attack begins so changing
@@ -409,11 +409,11 @@ bool Player::update_attack(float deltaTime, const Controls &controls) {
 
 AttackDirection Player::get_attack_direction(const Controls &controls) const {
 	// down attacks are only available while airborne
-	if (!isGrounded && IsKeyDown(controls.down))
+	if (!isGrounded && controls.down.is_down())
 		return AttackDirection::Down;
 
 	// jump/up doubles as the upward attack modifier
-	if (IsKeyDown(controls.jump))
+	if (controls.jump.is_down())
 		return AttackDirection::Up;
 
 	return facing == Facing::Right ? AttackDirection::Right

@@ -71,6 +71,11 @@ if(BUILD_TESTING)
         tests/player_contact_tests.cpp
     )
 
+    add_executable(
+        OneFrontControlsTests
+        tests/controls_tests.cpp
+    )
+
     target_link_libraries(
         OneFrontCameraTests
         PRIVATE
@@ -89,7 +94,14 @@ if(BUILD_TESTING)
         OneFrontCore
     )
 
+    target_link_libraries(
+        OneFrontControlsTests
+        PRIVATE
+        OneFrontCore
+    )
+
     add_test(NAME game_camera COMMAND OneFrontCameraTests)
     add_test(NAME world_layout COMMAND OneFrontWorldLayoutTests)
     add_test(NAME player_contact COMMAND OneFrontPlayerContactTests)
+    add_test(NAME controls COMMAND OneFrontControlsTests)
 endif()

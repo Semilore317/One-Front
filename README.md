@@ -20,6 +20,8 @@ and your goal is to make your way upward.
 | Attack | `J` |
 | Attack upward | Hold `W`, then press `J` |
 | Attack downward | While airborne, hold `S`, then press `J` |
+
+
 these are the defaults for now... but the code is structured such that there's room for two other combat-specific controls 
 as well as using a different config for arrow buttons as the primary movement controls.
 

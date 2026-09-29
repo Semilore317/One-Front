@@ -25,11 +25,13 @@ add_library(
     game/game.cpp
     game/camera/game_camera.cpp
     game/controls.cpp
+    game/goal.cpp
     world/level/level_builder.cpp
     world/world.cpp
     world/levels/vertical_prototype.cpp
     world/player/player.cpp
     world/platform/platform.cpp
+    rendering/draw_goal.cpp
     rendering/draw_player.cpp
 )
 
@@ -78,6 +80,11 @@ if(BUILD_TESTING)
         tests/player_contact_tests.cpp
     )
 
+    add_executable(
+        OneFrontGoalTests
+        tests/goal_tests.cpp
+    )
+
     target_link_libraries(
         OneFrontCameraTests
         PRIVATE
@@ -102,8 +109,15 @@ if(BUILD_TESTING)
         OneFrontCore
     )
 
+    target_link_libraries(
+        OneFrontGoalTests
+        PRIVATE
+        OneFrontCore
+    )
+
     add_test(NAME game_camera COMMAND OneFrontCameraTests)
     add_test(NAME level_builder COMMAND OneFrontLevelBuilderTests)
     add_test(NAME world_layout COMMAND OneFrontWorldLayoutTests)
     add_test(NAME player_contact COMMAND OneFrontPlayerContactTests)
+    add_test(NAME goal COMMAND OneFrontGoalTests)
 endif()

@@ -10,12 +10,14 @@ struct World {
 	      float rightBound,
 	      float topBound,
 	      float groundY,
-	      std::vector<Platform> platforms = {});
+	      std::vector<Platform> platforms = {},
+	      Rectangle goal = {});
 
 	float leftBound;
 	float rightBound;
 	float topBound;
 	float groundY;
+	Rectangle goal;
 	std::vector<Platform> platforms;
 
 	void update(float deltaTime);

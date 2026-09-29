@@ -46,6 +46,7 @@ int main() {
 	bool passed = true;
 	auto builder = test_level();
 	builder.spawn_on_ground(50.0f, 50.0f)
+	    .goal(1000.0f, above_ground(500.0f))
 	    .platform(80.0f, above_ground(40.0f))
 	    .moving_platform(300.0f,
 	                     above_ground(100.0f),
@@ -72,8 +73,13 @@ int main() {
 	passed &= expect(level.platforms[2].size.x == 30.0f &&
 	                     level.platforms[2].size.y == 70.0f,
 	                 "moving walls should use wall-sized defaults");
+	passed &=
+	    expect(level.goal.x == 1000.0f && level.goal.y == 60.0f &&
+	               level.goal.width == 40.0f && level.goal.height == 60.0f,
+	           "goals should rest on their authored surface");
 	auto elevatedSpawn = test_level();
-	elevatedSpawn.spawn(100.0f, above_ground(200.0f), 50.0f);
+	elevatedSpawn.spawn(100.0f, above_ground(200.0f), 50.0f)
+	    .goal(1000.0f, above_ground(500.0f));
 	const LevelDefinition elevatedLevel = std::move(elevatedSpawn).build();
 	passed &= expect(elevatedLevel.playerSpawn.x == 100.0f &&
 	                     elevatedLevel.playerSpawn.y == 370.0f,
@@ -82,10 +88,19 @@ int main() {
 	passed &= expect_invalid(
 	    [] {
 		    auto missingSpawn = test_level();
+		    missingSpawn.goal(1000.0f, above_ground(500.0f));
 		    [[maybe_unused]] const LevelDefinition missingLevel =
 		        std::move(missingSpawn).build();
 	    },
 	    "builder should reject levels without a player spawn");
+	passed &= expect_invalid(
+	    [] {
+		    auto missingGoal = test_level();
+		    missingGoal.spawn_on_ground(50.0f, 50.0f);
+		    [[maybe_unused]] const LevelDefinition missingLevel =
+		        std::move(missingGoal).build();
+	    },
+	    "builder should reject levels without a goal");
 	passed &= expect_invalid(
 	    [] {
 		    auto duplicateSpawn = test_level();
@@ -158,13 +173,69 @@ int main() {
 	passed &= expect_invalid(
 	    [] {
 		    auto reusedBuilder = test_level();
-		    reusedBuilder.spawn_on_ground(50.0f, 50.0f);
+		    reusedBuilder.spawn_on_ground(50.0f, 50.0f)
+		        .goal(1000.0f, above_ground(500.0f));
 		    [[maybe_unused]] const LevelDefinition first =
 		        std::move(reusedBuilder).build();
 		    [[maybe_unused]] const LevelDefinition second =
 		        std::move(reusedBuilder).build();
 	    },
 	    "builder should reject a second build");
+	passed &= expect_invalid(
+	    [] {
+		    auto duplicateGoal = test_level();
+		    duplicateGoal.goal(1000.0f, above_ground(500.0f));
+		    duplicateGoal.goal(900.0f, above_ground(400.0f));
+	    },
+	    "builder should reject duplicate goals");
+	passed &= expect_invalid(
+	    [] {
+		    auto outsideGoal = test_level();
+		    outsideGoal.goal(1260.0f, above_ground(500.0f));
+	    },
+	    "builder should reject goals outside the horizontal bounds");
+	passed &= expect_invalid(
+	    [] {
+		    auto aboveGoal = test_level();
+		    aboveGoal.goal(1000.0f, above_ground(1990.0f), 40.0f, 60.0f);
+	    },
+	    "builder should reject goals above the vertical bounds");
+	passed &= expect_invalid(
+	    [] {
+		    auto zeroGoal = test_level();
+		    zeroGoal.goal(1000.0f, above_ground(500.0f), 0.0f, 60.0f);
+	    },
+	    "builder should reject zero-width goals");
+	passed &= expect_invalid(
+	    [] {
+		    auto zeroGoal = test_level();
+		    zeroGoal.goal(1000.0f, above_ground(500.0f), 40.0f, 0.0f);
+	    },
+	    "builder should reject zero-height goals");
+	passed &= expect_invalid(
+	    [] {
+		    auto invalidGoal = test_level();
+		    invalidGoal.goal(std::numeric_limits<float>::infinity(),
+		                     above_ground(500.0f));
+	    },
+	    "builder should reject a non-finite goal position");
+	passed &= expect_invalid(
+	    [] {
+		    auto invalidGoal = test_level();
+		    invalidGoal.goal(1000.0f,
+		                     above_ground(500.0f),
+		                     std::numeric_limits<float>::infinity());
+	    },
+	    "builder should reject a non-finite goal width");
+	passed &= expect_invalid(
+	    [] {
+		    auto invalidGoal = test_level();
+		    invalidGoal.goal(1000.0f,
+		                     above_ground(500.0f),
+		                     40.0f,
+		                     std::numeric_limits<float>::infinity());
+	    },
+	    "builder should reject a non-finite goal height");
 	passed &= expect_invalid(
 	    [] {
 		    auto outsideSpawn = test_level();

@@ -17,6 +17,7 @@ levels::LevelBuilder::LevelBuilder(LevelBounds bounds):
            bounds.groundY - bounds.heightAboveGround,
            bounds.groundY,
            {},
+           {},
            {}} {
 	require(std::isfinite(bounds.left) && std::isfinite(bounds.right) &&
 	            std::isfinite(bounds.groundY) &&
@@ -49,6 +50,27 @@ levels::LevelBuilder &levels::LevelBuilder::spawn(float x,
 levels::LevelBuilder &
 levels::LevelBuilder::spawn_on_ground(float x, float playerHeight) & {
 	return spawn(x, above_ground(0.0f), playerHeight);
+}
+
+levels::LevelBuilder &levels::LevelBuilder::goal(float x,
+                                                 Elevation surfaceElevation,
+                                                 float width,
+                                                 float height) & {
+	require(!hasGoal_, "level may define only one goal");
+	require(std::isfinite(x) && std::isfinite(width) && std::isfinite(height),
+	        "goal geometry must be finite");
+	require(width > 0.0f && height > 0.0f, "goal dimensions must be positive");
+
+	const float surfaceY = world_y(surfaceElevation);
+	const Rectangle goalBounds{x, surfaceY - height, width, height};
+	require(goalBounds.x >= level_.leftBound &&
+	            goalBounds.x + goalBounds.width <= level_.rightBound &&
+	            goalBounds.y >= level_.topBound,
+	        "goal must remain inside the level bounds");
+
+	level_.goal = goalBounds;
+	hasGoal_ = true;
+	return *this;
 }
 
 levels::LevelBuilder &levels::LevelBuilder::platform(float x,
@@ -85,6 +107,7 @@ levels::LevelBuilder &levels::LevelBuilder::moving_wall(float x,
 LevelDefinition levels::LevelBuilder::build() && {
 	require(!hasBuilt_, "level builder may only build once");
 	require(hasSpawn_, "level must define a player spawn before build");
+	require(hasGoal_, "level must define a goal before build");
 	hasBuilt_ = true;
 	return std::move(level_);
 }

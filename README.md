@@ -1,9 +1,15 @@
 # One Front
 
-This is a 2D platforming game built with C++20 and Raylib.
-It's still quite early in development and  has the most basic  features in place
+One Front is a 2D platforming game built with C++20 and raylib. It is still early in development, but the core: movement, platforming, and combat mechanics are already playable.
 
-<img width="1344" height="756" alt="One Front" src="assets\Recording 2026-09-29 181344.gif" />
+## Description
+
+I wanted to build a platformer from the ground up so I could experiment with mechanics such as collision handling, responsive movement, platforming, and combat in C++ without relying on a full game engine.
+
+The current version includes running, jumping, crouching, fast-falling, directional attacks, moving and trap platforms, and a pogo mechanic. The game is still in development, and I plan to expand it with more levels, enemies, combat options, and a more polished art style.
+
+## Screenshots
+![One Front gameplay recording](assets/Recording%202026-09-29%20181344.gif)
 
 # How to Play
 Your goal is to climb to the top of the level and reach the flag. Use the platforms
@@ -58,4 +64,4 @@ cmake -S . -B build
 cmake --build build
 ```
 
-then run the generated executable in the build directory
+then run the generated executable in the `build` directory
